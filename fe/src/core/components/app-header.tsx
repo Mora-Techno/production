@@ -9,8 +9,8 @@ import {
 } from '@/components/atoms/navigation-menu';
 import { navigationMenuConfig } from '@/configs/app.config';
 import { cn } from '@/utils/classname';
-import Image from 'next/image';
 import Link from 'next/link';
+import { Leaf } from 'lucide-react';
 import { useEffect, useState } from 'react';
 // import UserDropdown from './user.dropdown';
 import LanguageDropdown from './language.dropdown';
@@ -36,15 +36,22 @@ export default function AppHeader() {
   return (
     <nav
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm p-6 border-b transition-all duration-200',
-        isScrolled ? 'border-b-border shadow-md' : 'border-b-transparent'
+        'fixed top-0 left-0 right-0 z-50 border-b p-4 backdrop-blur-md transition-all duration-200 md:p-6',
+        isScrolled
+          ? 'border-white/10 bg-[#0B0F19]/90 shadow-lg shadow-black/20'
+          : 'border-transparent bg-[#0B0F19]/70'
       )}
     >
       <div className="flex items-center justify-between max-w-7xl mx-auto">
         <div className="flex items-center gap-4">
           {/* Company Logo */}
-          <Link href="/">
-            <Image src="/images/logo.png" alt="Logo" width={40} height={40} />
+          <Link href="/home" className="flex items-center gap-2">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500/20 to-amber-500/10">
+              <Leaf className="size-5 text-orange-400" />
+            </div>
+            <span className="hidden font-serif text-lg font-semibold sm:inline">
+              Productify
+            </span>
           </Link>
 
           <NavigationMenu>

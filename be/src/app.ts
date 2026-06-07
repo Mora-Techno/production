@@ -31,6 +31,10 @@ class App {
           },
           tags: [
             {
+              name: "Auth",
+              description: "Autentikasi pengguna — register, login, logout",
+            },
+            {
               name: "Todos",
               description: "Manajemen tugas harian dan tenggat waktu",
             },

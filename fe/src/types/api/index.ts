@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export * from "./response";
 export * from "./productivity";
+export * from "./auth";
 
 export const userType = z.object({
   user: z.object({

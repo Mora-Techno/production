@@ -8,41 +8,50 @@ import { getCookie } from 'cookies-next';
 import { useAppDispatch } from '@/hooks/dispatch/dispatch';
 import { setCurrentUser } from '@/stores/authSlice/authSlice';
 import { APP_SESSION_COOKIE_KEY } from '@/configs/cookies.config';
+import { isAuthRoute, isPublicRoute } from '@/configs/routes.config';
+import type { AuthSession } from '@/types/api/auth';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const currentUser = useSelector((state: RootState) => state.auth.currentUser);
   const dispatch = useAppDispatch();
+  const [hydrated, setHydrated] = React.useState(false);
 
   React.useEffect(() => {
-    if (!currentUser?.user?.token) {
-      const token = getCookie(APP_SESSION_COOKIE_KEY);
-      if (token) {
-        dispatch(setCurrentUser({ user: { token } } as any));
-      }
+    const token = getCookie(APP_SESSION_COOKIE_KEY);
+    if (token && !currentUser?.user?.token) {
+      dispatch(
+        setCurrentUser({
+          user: {
+            id: '',
+            email: '',
+            fullName: '',
+            role: 'user',
+            token: String(token),
+          },
+        } satisfies AuthSession)
+      );
     }
-  }, [currentUser, dispatch]);
+    setHydrated(true);
+  }, [currentUser?.user?.token, dispatch]);
 
   React.useEffect(() => {
-    const isAuthPage =
-      pathname?.startsWith('/login') ||
-      pathname?.startsWith('/register') ||
-      pathname?.startsWith('/home');
+    if (!hydrated || !pathname) return;
 
     const isAuthenticated = Boolean(currentUser?.user?.token);
+    const onPublic = isPublicRoute(pathname);
+    const onAuth = isAuthRoute(pathname);
 
-    if (!isAuthenticated && !isAuthPage) {
+    if (!isAuthenticated && !onPublic) {
       router.replace('/login');
       return;
     }
 
-    if (isAuthenticated && isAuthPage) {
-      // setUp
-      // router.replace('/home');
-      return;
+    if (isAuthenticated && onAuth) {
+      router.replace('/');
     }
-  }, [pathname, currentUser, router]);
+  }, [pathname, currentUser, router, hydrated]);
 
   return <>{children}</>;
 }

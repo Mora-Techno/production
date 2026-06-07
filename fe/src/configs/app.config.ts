@@ -89,14 +89,24 @@ interface NavigationMenuConfig {
 export const navigationMenuConfig: NavigationMenuConfig = {
   items: [
     {
-      title: 'Home',
-      href: '/',
-      description: 'Home',
+      title: 'Beranda',
+      href: '/home',
+      description: 'Landing page',
     },
     {
-      title: 'masuk',
+      title: 'Fitur',
+      href: '/home#fitur',
+      description: 'Fitur unggulan',
+    },
+    {
+      title: 'Masuk',
       href: '/login',
-      description: 'masuk',
+      description: 'Login',
+    },
+    {
+      title: 'Daftar',
+      href: '/register',
+      description: 'Register',
     },
   ],
 };

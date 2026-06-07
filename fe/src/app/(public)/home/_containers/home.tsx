@@ -1,18 +1,22 @@
 'use client';
-import { themeConfig } from '@/configs/theme.config';
+
 import NavLayout from '@/core/layouts/nav.layout';
-import { useTheme } from '@/core/providers/theme.provider';
+import { HeroSection } from '../_sections/hero.section';
+import { StatsSection } from '../_sections/stats.section';
+import { FeaturesSection } from '../_sections/features.section';
+import { ShowcaseSection } from '../_sections/showcase.section';
+import { CtaSection } from '../_sections/cta.section';
 
 export default function ContainerHome() {
-  const { theme } = useTheme();
-
   return (
     <NavLayout>
-      <main className={`container  mx-auto bg-[${themeConfig[theme].primary.background}]`}>
-        <div className="flex flex-col items-center justify-center h-screen">
-          <h1 className="text-4xl font-bold">Home</h1>
-        </div>
-      </main>
+      <div className="landing-dark min-h-screen bg-[#0B0F19] pt-24 text-white">
+        <HeroSection />
+        <StatsSection />
+        <FeaturesSection />
+        <ShowcaseSection />
+        <CtaSection />
+      </div>
     </NavLayout>
   );
 }

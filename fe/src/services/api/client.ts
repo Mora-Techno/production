@@ -1,7 +1,22 @@
+import { getCookie } from "cookies-next";
 import { env } from "@/configs";
+import { APP_SESSION_COOKIE_KEY } from "@/configs/cookies.config";
 import type { TErrorResponse, TResponse } from "@/types/api/response";
 
 const BASE_URL = env.NEXT_PUBLIC_BACKEND_URL;
+
+function getAuthHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  const token = getCookie(APP_SESSION_COOKIE_KEY);
+  if (typeof token === "string" && token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  return headers;
+}
 
 type QueryParams = Record<string, string | number | undefined | null>;
 
@@ -35,7 +50,7 @@ export async function apiGet<T>(
 ): Promise<TResponse<T>> {
   const res = await fetch(`${BASE_URL}${path}${buildQuery(params)}`, {
     method: "GET",
-    headers: { "Content-Type": "application/json" },
+    headers: getAuthHeaders(),
     cache: "no-store",
   });
 
@@ -48,7 +63,7 @@ export async function apiPost<T>(
 ): Promise<TResponse<T>> {
   const res = await fetch(`${BASE_URL}${path}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: getAuthHeaders(),
     body: body !== undefined ? JSON.stringify(body) : undefined,
     cache: "no-store",
   });
@@ -62,7 +77,7 @@ export async function apiPut<T>(
 ): Promise<TResponse<T>> {
   const res = await fetch(`${BASE_URL}${path}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: getAuthHeaders(),
     body: body !== undefined ? JSON.stringify(body) : undefined,
     cache: "no-store",
   });
@@ -76,7 +91,7 @@ export async function apiPatch<T>(
 ): Promise<TResponse<T>> {
   const res = await fetch(`${BASE_URL}${path}`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: getAuthHeaders(),
     body: body !== undefined ? JSON.stringify(body) : undefined,
     cache: "no-store",
   });
@@ -87,7 +102,7 @@ export async function apiPatch<T>(
 export async function apiDelete<T>(path: string): Promise<TResponse<T>> {
   const res = await fetch(`${BASE_URL}${path}`, {
     method: "DELETE",
-    headers: { "Content-Type": "application/json" },
+    headers: getAuthHeaders(),
     cache: "no-store",
   });
 

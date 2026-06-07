@@ -4,3 +4,5 @@ export * from './i18n.config';
 export * from './query-key';
 export * from './env.config';
 export * from './theme.config';
+export * from './nav.config';
+export * from './routes.config';
