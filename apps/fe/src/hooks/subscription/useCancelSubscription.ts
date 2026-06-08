@@ -1,0 +1,34 @@
+'use client';
+
+import { useMutation } from '@tanstack/react-query';
+
+import { queryKey } from '@/configs';
+import { useAppNameSpace } from '@/hooks/useAppNameSpace';
+import { Api } from '@/services/api';
+
+export function useCancelSubscription() {
+  const ns = useAppNameSpace();
+
+  return useMutation({
+    mutationFn: () => Api.Subscription.cancel(),
+    onSuccess: (res) => {
+      ns.alert.toast({
+        title: res.message,
+        message: res.message,
+        icon: 'success',
+      });
+    },
+    onSettled: async () => {
+      await ns.queryClient.invalidateQueries({
+        queryKey: queryKey.subscriptionsRoot(),
+      });
+    },
+    onError: (err: Error) => {
+      ns.alert.toast({
+        title: err.message,
+        message: err.message,
+        icon: 'error',
+      });
+    },
+  });
+}

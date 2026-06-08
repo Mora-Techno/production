@@ -1,0 +1,42 @@
+{
+  "name": "@repo",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./config/api": "./config/api.config.ts",
+    "./endpoints": "./endpoints/index.ts",
+    "./endpoints/*": "./endpoints/*.ts",
+    "./types": "./types/index.ts",
+    "./types/*": "./types/*.ts",
+    "./services": "./services/index.ts",
+    "./services/*": "./services/*.ts",
+    "./utils/api": "./utils/api.ts",
+    "./react-query/query-client": "./react-query/query-client.tsx",
+    "./react-query/mutation-wrapper": "./react-query/mutation-wrapper.ts",
+    "./react-query/mutation-wrapper.type": "./react-query/mutation-wrapper.type.ts",
+    "./react-query/query-params": "./react-query/query-params.ts",
+    "./react-query/query-params.type": "./react-query/query-params.type.ts",
+    "./react-query/query-key": "./react-query/query-key.ts"
+  },
+  "scripts": {
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "format": "biome format --write .",
+    "format:check": "biome format ."
+  },
+  "peerDependencies": {
+    "react": "^19.1.0",
+    "@tanstack/react-query": "^5.90.21",
+    "zod": "^3.0.0 || ^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.1.0",
+    "react": "^19.1.0",
+    "@tanstack/react-query": "^5.90.21",
+    "zod": "^3.25.76"
+  }
+}
