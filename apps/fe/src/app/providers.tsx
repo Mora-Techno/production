@@ -1,25 +1,27 @@
-'use client';
+"use client";
 
-import '@/lib/api.setup';
+import "@/lib/api.setup";
 
-import { ReactQueryClientProvider } from '@repo/react-query/query-client';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { Toaster } from 'react-hot-toast';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
+import { ReactQueryClientProvider } from "@/pkg/react-query/query-client.pkg";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Toaster } from "react-hot-toast";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import NextTopLoader from "nextjs-toploader";
+import { SidebarProvider } from "@/components/atoms";
+import { PWAUpdatePrompt } from "@/components/pwa/PWAUpdatePrompt";
+import { AuthProvider } from "@/core/providers/auth.provider";
+import { LenisProvider } from "@/core/providers/lenis.provinder";
+import { ThemeProvider } from "@/core/providers/theme.provider";
+import { AlertProvinder } from "@/hooks/useAlert/costum-alert";
+import { persistor, store } from "@/stores/store";
 
-import { SidebarProvider } from '@/components/atoms';
-import { PWAUpdatePrompt } from '@/components/pwa/PWAUpdatePrompt';
-import { AuthProvider } from '@/core/providers/auth.provider';
-import { LenisProvider } from '@/core/providers/lenis.provinder';
-import { ThemeProvider } from '@/core/providers/theme.provider';
-import { AlertProvinder } from '@/hooks/useAlert/costum-alert';
-import { persistor, store } from '@/stores/store';
-
-import { composeProviders } from './composeProvinders';
+import { composeProviders } from "./composeProvinders";
 
 const Providers = composeProviders([
-  ({ children }) => <SidebarProvider defaultOpen={false}>{children}</SidebarProvider>,
+  ({ children }) => (
+    <SidebarProvider defaultOpen={false}>{children}</SidebarProvider>
+  ),
   ({ children }) => <Provider store={store}>{children}</Provider>,
   ({ children }) => <PersistGate persistor={persistor}>{children}</PersistGate>,
   AuthProvider,
@@ -33,6 +35,17 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <Providers>
       <PWAUpdatePrompt />
+      <NextTopLoader
+        color="#428aff"
+        initialPosition={0.08}
+        crawlSpeed={200}
+        height={3}
+        crawl={true}
+        showSpinner={false}
+        easing="ease"
+        speed={200}
+        zIndex={99999}
+      />
       {children}
       <ReactQueryDevtools initialIsOpen={false} />
       <Toaster

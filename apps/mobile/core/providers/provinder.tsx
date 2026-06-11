@@ -1,12 +1,10 @@
-import { ReactQueryClientProvider } from '@repo/react-query/query-client';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-
-import { ThemeProvider } from '@/core/providers/theme.provinder';
-import { AlertProvinder } from '@/hooks/useAlert/costum-alert';
-import { persistor, store } from '@/stores/store';
-
-import { composeProviders } from './composeProvinder';
+import { ReactQueryClientProvider } from "@/pkg/react-query/query-client.pkg";
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { ThemeProvider } from "@/core/providers/theme.provinder";
+import { AlertProvinder } from "@/hooks/useAlert/costum-alert";
+import { persistor, store } from "@/stores/store";
+import { composeProviders } from "./composeProvinder";
 
 const Providers = composeProviders([
   ({ children }) => <Provider store={store}>{children}</Provider>,

@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { getCookie } from 'cookies-next';
-import { usePathname, useRouter } from 'next/navigation';
-import React from 'react';
-import { useSelector } from 'react-redux';
+import { getCookie } from "cookies-next";
+import { usePathname, useRouter } from "next/navigation";
+import React from "react";
+import { useSelector } from "react-redux";
 
-import { APP_SESSION_COOKIE_KEY } from '@/configs/cookies.config';
-import { isAuthRoute, isPublicRoute } from '@/configs/routes.config';
-import { useAppDispatch } from '@/hooks/dispatch/dispatch';
-import { setCurrentUser } from '@/stores/authSlice/authSlice';
-import type { RootState } from '@/stores/store';
-import type { AuthSession } from '@/types/api/auth';
+import { APP_SESSION_COOKIE_KEY } from "@/configs/cookies.config";
+import { isAuthRoute, isPublicRoute } from "@/configs/routes.config";
+import { useAppDispatch } from "@/hooks/dispatch/dispatch";
+import { setCurrentUser } from "@/stores/authSlice/authSlice";
+import type { RootState } from "@/stores/store";
+import type { AuthSession } from "@/types/api/auth";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -25,10 +25,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       dispatch(
         setCurrentUser({
           user: {
-            id: '',
-            email: '',
-            fullName: '',
-            role: 'user',
+            id: "",
+            email: "",
+            fullName: "",
+            role: "user",
             token: String(token),
           },
         } satisfies AuthSession),
@@ -45,12 +45,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const onAuth = isAuthRoute(pathname);
 
     if (!isAuthenticated && !onPublic) {
-      router.replace('/login');
+      router.replace("/login");
       return;
     }
 
     if (isAuthenticated && onAuth) {
-      router.replace('/');
+      router.replace("/home");
     }
   }, [pathname, currentUser, router, hydrated]);
 

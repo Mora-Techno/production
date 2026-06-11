@@ -1,12 +1,12 @@
-import { Icon } from '@iconify/react';
-import { Leaf } from 'lucide-react';
-import Link from 'next/link';
+import { Icon } from "@iconify/react";
+import { Leaf } from "lucide-react";
+import Link from "next/link";
 
-import { appConfig } from '@/configs/app.config';
+import { appConfig } from "@/configs/app.config";
 
 export default function AppFooter() {
   return (
-    <footer className="border-t border-white/10 bg-[#080B12] px-4 py-12 md:px-6">
+    <footer className="border-t border-white/10 bg-background/90 px-4 py-12 md:px-6">
       <div className="mx-auto flex max-w-5xl flex-col gap-8 md:flex-row md:items-start md:justify-between">
         <div>
           <Link href="/home" className="flex items-center gap-2">
@@ -14,12 +14,12 @@ export default function AppFooter() {
               <Leaf className="size-5 text-orange-400" />
             </div>
             <span className="font-serif text-lg font-semibold text-white">
-              {appConfig.name === 'App' ? 'Productify' : appConfig.name}
+              {appConfig.name === "App" ? "Productify" : appConfig.name}
             </span>
           </Link>
           <p className="mt-4 max-w-xs text-sm text-zinc-500">
-            PWA Produktivitas dengan dark theme modern — kelola tugas, catatan, dan fokus dalam satu
-            tempat.
+            PWA Produktivitas dengan dark theme modern — kelola tugas, catatan,
+            dan fokus dalam satu tempat.
           </p>
         </div>
 
