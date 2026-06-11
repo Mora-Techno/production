@@ -1,12 +1,15 @@
-import type { MetadataRoute } from 'next';
+import type { MetadataRoute } from "next";
+import { PUBLIC_ROUTES } from "@/configs/app.config";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const locations = [`${process.env.NEXT_PUBLIC_APP_URL}/sitemap-general.xml`];
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://mora.my.id";
 
-  return locations.map((location) => ({
-    url: location,
-    lastModified: new Date().toISOString(),
-    changeFrequency: 'daily',
-    priority: 0.7,
+  return PUBLIC_ROUTES.filter(
+    (route) => route !== "/login" && route !== "/register",
+  ).map((route) => ({
+    url: `${baseUrl}${route === "/" ? "/home" : route}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: route === "/home" || route === "/" ? 1 : 0.8,
   }));
 }

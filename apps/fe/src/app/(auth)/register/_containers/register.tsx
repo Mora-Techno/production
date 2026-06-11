@@ -1,11 +1,10 @@
-'use client';
+"use client";
 
-import { Leaf } from 'lucide-react';
-import Link from 'next/link';
+import { Leaf } from "lucide-react";
+import Link from "next/link";
 
-import { GhibliCard } from '@/components/molecules/ghibli-card';
-
-import { RegisterFormSection } from '../_sections/register-form.section';
+import { GhibliCard } from "@/components/molecules/ghibli-card";
+import { RegisterFormSection } from "@/components/page/auth";
 
 export default function RegisterContainer() {
   return (
@@ -14,17 +13,25 @@ export default function RegisterContainer() {
         <div className="mb-6 flex flex-col items-center gap-2 text-center">
           <Leaf className="size-8 text-primary" />
           <h1 className="font-serif text-2xl font-semibold">Buat Akun</h1>
-          <p className="text-sm text-muted-foreground">Mulai perjalanan produktivitasmu</p>
+          <p className="text-sm text-muted-foreground">
+            Mulai perjalanan produktivitasmu
+          </p>
         </div>
         <RegisterFormSection />
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          Sudah punya akun?{' '}
-          <Link href="/login" className="font-medium text-primary hover:underline">
+          Sudah punya akun?{" "}
+          <Link
+            href="/login"
+            className="font-medium text-primary hover:underline"
+          >
             Masuk di sini
           </Link>
         </p>
         <p className="mt-2 text-center text-sm">
-          <Link href="/home" className="text-muted-foreground hover:text-primary">
+          <Link
+            href="/home"
+            className="text-muted-foreground hover:text-primary"
+          >
             ← Kembali ke beranda
           </Link>
         </p>

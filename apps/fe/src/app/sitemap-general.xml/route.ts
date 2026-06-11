@@ -1,3 +1,5 @@
+import { PUBLIC_ROUTES } from "@/configs/app.config";
+
 function generateSitemap(locations: string[]) {
   const newSitemaps = locations
     .map(
@@ -5,12 +7,12 @@ function generateSitemap(locations: string[]) {
         <url>
             <loc>${location}</loc>
             <lastmod>${new Date().toISOString()}</lastmod>
-            <changeFrequency>daily</changeFrequency>
-            <priority>0.7</priority>
+            <changeFrequency>weekly</changeFrequency>
+            <priority>0.8</priority>
         </url>
     `,
     )
-    .join('');
+    .join("");
 
   return `<?xml version="1.0" encoding="UTF-8"?>
     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -19,14 +21,19 @@ function generateSitemap(locations: string[]) {
 }
 
 export async function GET() {
-  const locations = [`${process.env.NEXT_PUBLIC_APP_URL}`];
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://";
+
+  const locations = PUBLIC_ROUTES.filter((route) => route !== "/").map(
+    (route) => `${baseUrl}${route}`,
+  );
+
   const xmlResponse = generateSitemap(locations);
 
   return new Response(xmlResponse, {
     status: 200,
     headers: {
-      'Content-Type': 'application/xml',
-      'Cache-control': 'public, s-maxage=86400, stale-while-revalidate',
+      "Content-Type": "application/xml",
+      "Cache-control": "public, s-maxage=86400, stale-while-revalidate",
     },
   });
 }

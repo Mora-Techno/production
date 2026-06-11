@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { ArrowRight, Search, Sparkles } from 'lucide-react';
-import Link from 'next/link';
+import { ArrowRight, Search, Sparkles } from "lucide-react";
+import Link from "next/link";
 
-import { Button } from '@/components/atoms';
-import { Badge } from '@/components/atoms';
-import { useGsapStagger } from '@/hooks/useGsapStagger';
+import { Button } from "@/components/atoms";
+import { Badge } from "@/components/atoms";
+import { useGsapStagger } from "@/hooks/useGsapStagger";
 
-const TAGS = ['Produktivitas', 'Todo', 'Notes', 'Kalender', 'Musik Fokus'];
+const TAGS = ["Produktivitas", "Todo", "Notes", "Kalender", "Musik Fokus"];
 
 export function HeroSection() {
   const ref = useGsapStagger<HTMLDivElement>([]);
@@ -23,16 +23,16 @@ export function HeroSection() {
         <div data-stagger-item>
           <Badge className="mb-6 border-orange-500/30 bg-orange-500/10 px-4 py-1.5 text-orange-300 hover:bg-orange-500/10">
             <Sparkles className="size-3.5" />
-            New — PWA Produktivitas FutureTech
+            New — Produtify
           </Badge>
         </div>
 
         <h1
           data-stagger-item
-          className="font-serif text-4xl font-bold leading-tight tracking-tight text-white md:text-6xl lg:text-7xl"
+          className="font-serif text-4xl font-bold leading-tight tracking-tight md:text-6xl  lg:text-7xl"
         >
-          Jelajahi Masa Depan{' '}
-          <span className="bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-200 bg-clip-text text-transparent">
+          Jelajahi Masa Depan{" "}
+          <span className="bg-gradient-to-r from-primary via-primary/60 to-secondary bg-clip-text text-transparent">
             Produktivitas Digital
           </span>
         </h1>
@@ -41,44 +41,51 @@ export function HeroSection() {
           data-stagger-item
           className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-zinc-400 md:text-lg"
         >
-          Kelola tugas, catatan, kalender, dan musik fokus dalam satu PWA yang elegan. Dibangun
-          untuk pekerja modern yang menginginkan alur kerja yang tenang namun powerful.
+          Kelola tugas, catatan, kalender, dan musik fokus dalam satu PWA yang
+          elegan. Dibangun untuk pekerja modern yang menginginkan alur kerja
+          yang tenang namun powerful.
         </p>
 
         <div
           data-stagger-item
           className="mx-auto mt-10 flex max-w-xl items-center gap-2 rounded-2xl border border-white/10 bg-white/5 p-2 backdrop-blur-md"
         >
-          <Search className="ml-3 size-5 shrink-0 text-zinc-500" />
+          <Search className="ml-3 size-5 shrink-0 " />
           <input
             type="text"
             placeholder="Cari fitur, tips produktivitas..."
-            className="flex-1 bg-transparent py-3 text-sm text-white outline-none placeholder:text-zinc-500"
+            className="flex-1 bg-transparent py-3 text-sm  outline-none placeholder:text-zinc-500"
           />
           <Button
             asChild
-            className="rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 px-5 text-white hover:from-orange-400 hover:to-amber-400"
+            className="rounded-xl bg-gradient-to-r from-primary/50 to-primary/60 px-5  hover:from-primary/80 hover:to-primary/90"
           >
             <Link href="/login">Mulai</Link>
           </Button>
         </div>
 
-        <div data-stagger-item className="mt-8 flex flex-wrap items-center justify-center gap-2">
+        <div
+          data-stagger-item
+          className="mt-8 flex flex-wrap items-center justify-center gap-2"
+        >
           {TAGS.map((tag) => (
             <span
               key={tag}
-              className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs text-zinc-400 transition-colors hover:border-orange-500/30 hover:text-orange-300"
+              className="rounded-full border border-foreground/10 bg-foreground/5 px-4 py-1.5 text-xs text-zinc-400 cursor-pointer transition-colors hover:border-primary/60 hover:text-primary/60"
             >
               {tag}
             </span>
           ))}
         </div>
 
-        <div data-stagger-item className="mt-10 flex flex-wrap items-center justify-center gap-4">
+        <div
+          data-stagger-item
+          className="mt-10 flex flex-wrap items-center justify-center gap-4"
+        >
           <Button
             asChild
             size="lg"
-            className="rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 px-8 text-white shadow-lg shadow-orange-500/20 hover:from-orange-400 hover:to-amber-400"
+            className="rounded-xl bg-gradient-to-r from-primary/60 to-primary/70 px-8  shadow-lg shadow-primary/40 hover:bg-primary"
           >
             <Link href="/register">
               Buat Akun Gratis <ArrowRight className="size-4" />
@@ -88,7 +95,7 @@ export function HeroSection() {
             asChild
             size="lg"
             variant="outline"
-            className="rounded-xl border-white/15 bg-transparent text-white hover:bg-white/10 hover:text-white"
+            className="rounded-xl border-foreground/15 bg-transparent  hover:bg-foreground/10 "
           >
             <Link href="/login">Masuk</Link>
           </Button>
