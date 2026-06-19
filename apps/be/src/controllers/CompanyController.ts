@@ -1,121 +1,125 @@
-import CompanyService from '@/service/CompanyService';
-import AuthService from '@/service/AuthService';
-import { errorResponse, successResponse } from '@/http/response';
-import type { JwtPayload } from '@/types/auth.types';
+import CompanyService from "@/service/CompanyService";
+import AuthService from "@/service/AuthService";
+import { HttpResponse } from "@/http";
+import type { JwtPayload } from "@repo/types/auth.types";
 import type {
-  CreateAdminBody,
-  RegisterCompanyBody,
-  UpdateSubscriptionBody,
-} from '@/types/company.types';
+  PickCreateAdmin,
+  PickRegisterCompany,
+  PickUpdateCompanySubscription,
+} from "@repo/types/company.types";
+import type { AppContext } from "@/contex";
 
-function getUser(c: any): JwtPayload {
+function getUser(c: AppContext): JwtPayload {
   return c.user as JwtPayload;
 }
 
 class CompanyController {
-  public async register(c: any) {
+  public async register(c: AppContext) {
     try {
-      const body = c.body as RegisterCompanyBody;
+      const body = c.body as PickRegisterCompany;
       const data = await CompanyService.registerLeader(body);
       const session = await AuthService.createSession(data.leader.id);
 
-      return c.json(
-        successResponse(
-          'Company dan akun leader berhasil dibuat',
-          { company: data.company, leader: data.leader, ...session },
-          201,
-        ),
-        201,
+      return HttpResponse(c).created(
+        { company: data.company, leader: data.leader, ...session },
+        "Company dan akun leader berhasil dibuat",
       );
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : 'Gagal mendaftarkan company';
-      return c.json(errorResponse(message, 400), 400);
+      const message =
+        error instanceof Error ? error.message : "Gagal mendaftarkan company";
+      return HttpResponse(c).badRequest(message);
     }
   }
 
-  public async createAdmin(c: any) {
+  public async createAdmin(c: AppContext) {
     try {
       const user = getUser(c);
 
-      if (user.companyRole !== 'leader') {
-        return c.json(errorResponse('Hanya leader yang dapat membuat admin', 403), 403);
+      if (user.companyRole !== "leader") {
+        return HttpResponse(c).forbidden("Hanya leader yang dapat membuat admin");
       }
 
       if (!user.companyId) {
-        return c.json(errorResponse('Company tidak ditemukan', 404), 404);
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
-      const body = c.body as CreateAdminBody;
+      const body = c.body as PickCreateAdmin;
       const data = await CompanyService.createAdmin(user.companyId, body);
 
-      return c.json(successResponse('Admin berhasil dibuat', data, 201), 201);
+      return HttpResponse(c).created(data, "Admin berhasil dibuat");
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : 'Gagal membuat admin';
-      return c.json(errorResponse(message, 400), 400);
+      const message =
+        error instanceof Error ? error.message : "Gagal membuat admin";
+      return HttpResponse(c).badRequest(message);
     }
   }
 
-  public async listAdmins(c: any) {
+  public async listAdmins(c: AppContext) {
     try {
       const user = getUser(c);
 
-      if (!['leader', 'admin'].includes(user.companyRole)) {
-        return c.json(errorResponse('Akses ditolak', 403), 403);
+      if (!["leader", "admin"].includes(user.companyRole)) {
+        return HttpResponse(c).forbidden("Akses ditolak");
       }
 
       if (!user.companyId) {
-        return c.json(errorResponse('Company tidak ditemukan', 404), 404);
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
       const data = await CompanyService.listAdmins(user.companyId);
-      return c.json(successResponse('Berhasil mengambil daftar admin', data));
+      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil daftar admin");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal mengambil daftar admin', 500), 500);
+      return HttpResponse(c).internalError(error, "Gagal mengambil daftar admin");
     }
   }
 
-  public async getProfile(c: any) {
+  public async getProfile(c: AppContext) {
     try {
       const user = getUser(c);
 
       if (!user.companyId) {
-        return c.json(errorResponse('Company tidak ditemukan', 404), 404);
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
       const data = await CompanyService.getById(user.companyId);
-      if (!data) return c.json(errorResponse('Company tidak ditemukan', 404), 404);
+      if (!data) return HttpResponse(c).notFound("Company tidak ditemukan");
 
-      return c.json(successResponse('Berhasil mengambil profil company', data));
+      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil profil company");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal mengambil profil company', 500), 500);
+      return HttpResponse(c).internalError(error, "Gagal mengambil profil company");
     }
   }
 
-  public async updateSubscription(c: any) {
+  public async updateSubscription(c: AppContext) {
     try {
       const user = getUser(c);
 
-      if (user.companyRole !== 'leader') {
-        return c.json(errorResponse('Hanya leader yang dapat mengubah langganan', 403), 403);
+      if (user.companyRole !== "leader") {
+        return HttpResponse(c).forbidden(
+          "Hanya leader yang dapat mengubah langganan",
+        );
       }
 
       if (!user.companyId) {
-        return c.json(errorResponse('Company tidak ditemukan', 404), 404);
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
-      const body = c.body as UpdateSubscriptionBody;
-      const data = await CompanyService.updateSubscription(user.companyId, body);
+      const body = c.body as PickUpdateCompanySubscription;
+      const data = await CompanyService.updateSubscription(
+        user.companyId,
+        body,
+      );
 
-      if (!data) return c.json(errorResponse('Company tidak ditemukan', 404), 404);
+      if (!data) return HttpResponse(c).notFound("Company tidak ditemukan");
 
-      return c.json(successResponse('Langganan berhasil diperbarui', data));
+      return HttpResponse(c).ok(data, undefined, "Langganan berhasil diperbarui");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal memperbarui langganan', 500), 500);
+      return HttpResponse(c).internalError(error, "Gagal memperbarui langganan");
     }
   }
 }

@@ -1,4 +1,5 @@
-import { BookOpen, History, Home, User } from "lucide-react";
+import { RegisterProps } from "@/types/ui";
+import { BookOpen, History, Home, User, Building2 } from "lucide-react";
 import React from "react";
 
 interface AppConfig {
@@ -119,4 +120,17 @@ export const SIDEBAR_MENU = [
 ];
 
 export const PUBLIC_ROUTES = ["/", "/resource", "/blogs", "/pricing"];
-export const AUTH_ROUTES = ["/login", "/register"];
+export const AUTH_ROUTES = ["/login", "/register", "/forgot-password"];
+
+export const RegisterConfigRoutes: RegisterProps[] = [
+  {
+    title: "Daftarkan perusahaan mu",
+    href: "/register/company",
+    icon: Building2,
+  },
+  {
+    title: "Daftarkan sebagai pekerja",
+    href: "/",
+    icon: User,
+  },
+];

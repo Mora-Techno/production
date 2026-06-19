@@ -1,11 +1,11 @@
-import bcryptjs from 'bcryptjs';
-import prisma from 'prisma/client';
-import { getWorkstationUserLimit } from '@/utils/tierLimits';
+import bcryptjs from "bcryptjs";
+import prisma from "prisma/client";
+import { getWorkstationUserLimit } from "@/utils/tierLimits";
 import type {
-  CreateWorkstationBody,
-  InviteMemberBody,
-  UpdateWorkstationBody,
-} from '@/types/workstation.types';
+  PickCreateWorkstation,
+  PickInviteMember,
+  PickUpdateWorkstation,
+} from "@repo/types/workstation.types";
 
 class WorkstationService {
   private async getCompanyWithLimit(companyId: string) {
@@ -14,7 +14,7 @@ class WorkstationService {
     });
 
     if (!company) {
-      throw new Error('Company tidak ditemukan');
+      throw new Error("Company tidak ditemukan");
     }
 
     return {
@@ -29,7 +29,7 @@ class WorkstationService {
     const workstations = await prisma.workstation.findMany({
       where: { companyId },
       include: { _count: { select: { members: true } } },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
 
     return workstations.map((ws) => ({
@@ -61,7 +61,7 @@ class WorkstationService {
               },
             },
           },
-          orderBy: { joinedAt: 'asc' },
+          orderBy: { joinedAt: "asc" },
         },
       },
     });
@@ -81,7 +81,11 @@ class WorkstationService {
     };
   }
 
-  public async create(companyId: string, createdById: string, input: CreateWorkstationBody) {
+  public async create(
+    companyId: string,
+    createdById: string,
+    input: PickCreateWorkstation,
+  ) {
     await this.getCompanyWithLimit(companyId);
 
     const workstation = await prisma.workstation.create({
@@ -106,7 +110,11 @@ class WorkstationService {
     };
   }
 
-  public async update(id: string, companyId: string, input: UpdateWorkstationBody) {
+  public async update(
+    id: string,
+    companyId: string,
+    input: PickUpdateWorkstation,
+  ) {
     const existing = await prisma.workstation.findFirst({
       where: { id, companyId },
     });
@@ -146,7 +154,11 @@ class WorkstationService {
     return existing;
   }
 
-  public async inviteMember(workstationId: string, companyId: string, input: InviteMemberBody) {
+  public async inviteMember(
+    workstationId: string,
+    companyId: string,
+    input: PickInviteMember,
+  ) {
     const workstation = await prisma.workstation.findFirst({
       where: { id: workstationId, companyId },
       include: {
@@ -156,7 +168,7 @@ class WorkstationService {
     });
 
     if (!workstation) {
-      throw new Error('Workstation tidak ditemukan');
+      throw new Error("Workstation tidak ditemukan");
     }
 
     const maxMembers = getWorkstationUserLimit(workstation.company.tier);
@@ -173,7 +185,7 @@ class WorkstationService {
 
     if (existingUser) {
       if (existingUser.companyId && existingUser.companyId !== companyId) {
-        throw new Error('Email sudah terdaftar di company lain');
+        throw new Error("Email sudah terdaftar di company lain");
       }
 
       const alreadyMember = await prisma.workstationMember.findUnique({
@@ -186,7 +198,7 @@ class WorkstationService {
       });
 
       if (alreadyMember) {
-        throw new Error('Pengguna sudah menjadi anggota workstation ini');
+        throw new Error("Pengguna sudah menjadi anggota workstation ini");
       }
 
       const member = await prisma.$transaction(async (tx) => {
@@ -195,14 +207,14 @@ class WorkstationService {
             ? existingUser
             : await tx.user.update({
                 where: { id: existingUser.id },
-                data: { companyId, companyRole: 'employee' },
+                data: { companyId, companyRole: "employee" },
               });
 
         return tx.workstationMember.create({
           data: {
             workstationId,
             userId: user.id,
-            role: input.role ?? 'member',
+            role: input.role ?? "member",
           },
           include: {
             user: {
@@ -228,7 +240,7 @@ class WorkstationService {
           email: input.email,
           fullName: input.fullName,
           password: hashedPassword,
-          companyRole: 'employee',
+          companyRole: "employee",
           companyId,
         },
       });
@@ -237,7 +249,7 @@ class WorkstationService {
         data: {
           workstationId,
           userId: user.id,
-          role: input.role ?? 'member',
+          role: input.role ?? "member",
         },
         include: {
           user: {
@@ -255,7 +267,11 @@ class WorkstationService {
     return member;
   }
 
-  public async removeMember(workstationId: string, companyId: string, userId: string) {
+  public async removeMember(
+    workstationId: string,
+    companyId: string,
+    userId: string,
+  ) {
     const workstation = await prisma.workstation.findFirst({
       where: { id: workstationId, companyId },
     });

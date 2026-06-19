@@ -1,6 +1,4 @@
-"use client";
-
-import { ArrowRight, Search, Sparkles } from "lucide-react";
+import { Search, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/atoms";
@@ -15,8 +13,8 @@ export function HeroSection() {
   return (
     <section className="relative overflow-hidden px-4 pb-20 pt-8 md:px-6 md:pb-28 md:pt-12">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-32 top-0 size-[420px] rounded-full bg-orange-500/10 blur-[120px]" />
-        <div className="absolute -right-20 top-20 size-[360px] rounded-full bg-amber-400/10 blur-[100px]" />
+        <div className="absolute -left-32 top-0 size-[420px] rounded-full bg-primary/10 blur-[120px]" />
+        <div className="absolute -right-20 top-20 size-[360px] rounded-full bg-primary/10 blur-[100px]" />
       </div>
 
       <div ref={ref} className="relative mx-auto max-w-5xl text-center">
@@ -76,29 +74,6 @@ export function HeroSection() {
               {tag}
             </span>
           ))}
-        </div>
-
-        <div
-          data-stagger-item
-          className="mt-10 flex flex-wrap items-center justify-center gap-4"
-        >
-          <Button
-            asChild
-            size="lg"
-            className="rounded-xl bg-gradient-to-r from-primary/60 to-primary/70 px-8  shadow-lg shadow-primary/40 hover:bg-primary"
-          >
-            <Link href="/register">
-              Buat Akun Gratis <ArrowRight className="size-4" />
-            </Link>
-          </Button>
-          <Button
-            asChild
-            size="lg"
-            variant="outline"
-            className="rounded-xl border-foreground/15 bg-transparent  hover:bg-foreground/10 "
-          >
-            <Link href="/login">Masuk</Link>
-          </Button>
         </div>
       </div>
     </section>

@@ -1,164 +1,195 @@
-import WorkstationService from '@/service/WorkstationService';
-import { errorResponse, successResponse } from '@/http/response';
-import type { JwtPayload } from '@/types/auth.types';
+import WorkstationService from "@/service/WorkstationService";
+import { HttpResponse } from "@/http";
+import type { JwtPayload } from "@repo/types/auth.types";
 import type {
-  CreateWorkstationBody,
-  InviteMemberBody,
-  UpdateWorkstationBody,
-} from '@/types/workstation.types';
+  PickCreateWorkstation,
+  PickInviteMember,
+  PickUpdateWorkstation,
+} from "@repo/types/workstation.types";
+import type { AppContext } from "@/contex";
 
-function getUser(c: any): JwtPayload {
+function getUser(c: AppContext): JwtPayload {
   return c.user as JwtPayload;
 }
 
 function canManageWorkstation(user: JwtPayload): boolean {
-  return user.companyRole === 'leader' || user.companyRole === 'admin';
+  return user.companyRole === "leader" || user.companyRole === "admin";
 }
 
 class WorkstationController {
-  public async list(c: any) {
+  public async list(c: AppContext) {
     try {
       const user = getUser(c);
 
       if (!canManageWorkstation(user)) {
-        return c.json(errorResponse('Akses ditolak', 403), 403);
+        return HttpResponse(c).forbidden("Akses ditolak");
       }
 
       if (!user.companyId) {
-        return c.json(errorResponse('Company tidak ditemukan', 404), 404);
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
       const data = await WorkstationService.list(user.companyId);
-      return c.json(successResponse('Berhasil mengambil daftar workstation', data));
+      return HttpResponse(c).ok(
+        data,
+        undefined,
+        "Berhasil mengambil daftar workstation",
+      );
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal mengambil daftar workstation', 500), 500);
+      return HttpResponse(c).internalError(
+        error,
+        "Gagal mengambil daftar workstation",
+      );
     }
   }
 
-  public async getById(c: any) {
+  public async getById(c: AppContext) {
     try {
       const user = getUser(c);
 
       if (!canManageWorkstation(user)) {
-        return c.json(errorResponse('Akses ditolak', 403), 403);
+        return HttpResponse(c).forbidden("Akses ditolak");
       }
 
       if (!user.companyId) {
-        return c.json(errorResponse('Company tidak ditemukan', 404), 404);
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
       const data = await WorkstationService.getById(c.params.id, user.companyId);
-      if (!data) return c.json(errorResponse('Workstation tidak ditemukan', 404), 404);
+      if (!data) return HttpResponse(c).notFound("Workstation tidak ditemukan");
 
-      return c.json(successResponse('Berhasil mengambil detail workstation', data));
+      return HttpResponse(c).ok(
+        data,
+        undefined,
+        "Berhasil mengambil detail workstation",
+      );
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal mengambil detail workstation', 500), 500);
+      return HttpResponse(c).internalError(
+        error,
+        "Gagal mengambil detail workstation",
+      );
     }
   }
 
-  public async create(c: any) {
+  public async create(c: AppContext) {
     try {
       const user = getUser(c);
 
       if (!canManageWorkstation(user)) {
-        return c.json(errorResponse('Akses ditolak', 403), 403);
+        return HttpResponse(c).forbidden("Akses ditolak");
       }
 
       if (!user.companyId) {
-        return c.json(errorResponse('Company tidak ditemukan', 404), 404);
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
-      const body = c.body as CreateWorkstationBody;
-      const data = await WorkstationService.create(user.companyId, user.id, body);
+      const body = c.body as PickCreateWorkstation;
+      const data = await WorkstationService.create(
+        user.companyId,
+        user.id,
+        body,
+      );
 
-      return c.json(successResponse('Workstation berhasil dibuat', data, 201), 201);
+      return HttpResponse(c).created(data, "Workstation berhasil dibuat");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal membuat workstation', 500), 500);
+      return HttpResponse(c).internalError(error, "Gagal membuat workstation");
     }
   }
 
-  public async update(c: any) {
+  public async update(c: AppContext) {
     try {
       const user = getUser(c);
 
       if (!canManageWorkstation(user)) {
-        return c.json(errorResponse('Akses ditolak', 403), 403);
+        return HttpResponse(c).forbidden("Akses ditolak");
       }
 
       if (!user.companyId) {
-        return c.json(errorResponse('Company tidak ditemukan', 404), 404);
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
-      const body = c.body as UpdateWorkstationBody;
-      const data = await WorkstationService.update(c.params.id, user.companyId, body);
+      const body = c.body as PickUpdateWorkstation;
+      const data = await WorkstationService.update(
+        c.params.id,
+        user.companyId,
+        body,
+      );
 
-      if (!data) return c.json(errorResponse('Workstation tidak ditemukan', 404), 404);
+      if (!data) return HttpResponse(c).notFound("Workstation tidak ditemukan");
 
-      return c.json(successResponse('Workstation berhasil diperbarui', data));
+      return HttpResponse(c).ok(data, undefined, "Workstation berhasil diperbarui");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal memperbarui workstation', 500), 500);
+      return HttpResponse(c).internalError(error, "Gagal memperbarui workstation");
     }
   }
 
-  public async remove(c: any) {
+  public async remove(c: AppContext) {
     try {
       const user = getUser(c);
 
       if (!canManageWorkstation(user)) {
-        return c.json(errorResponse('Akses ditolak', 403), 403);
+        return HttpResponse(c).forbidden("Akses ditolak");
       }
 
       if (!user.companyId) {
-        return c.json(errorResponse('Company tidak ditemukan', 404), 404);
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
       const data = await WorkstationService.remove(c.params.id, user.companyId);
-      if (!data) return c.json(errorResponse('Workstation tidak ditemukan', 404), 404);
+      if (!data) return HttpResponse(c).notFound("Workstation tidak ditemukan");
 
-      return c.json(successResponse('Workstation berhasil dihapus', data));
+      return HttpResponse(c).ok(data, undefined, "Workstation berhasil dihapus");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal menghapus workstation', 500), 500);
+      return HttpResponse(c).internalError(error, "Gagal menghapus workstation");
     }
   }
 
-  public async inviteMember(c: any) {
+  public async inviteMember(c: AppContext) {
     try {
       const user = getUser(c);
 
       if (!canManageWorkstation(user)) {
-        return c.json(errorResponse('Akses ditolak', 403), 403);
+        return HttpResponse(c).forbidden("Akses ditolak");
       }
 
       if (!user.companyId) {
-        return c.json(errorResponse('Company tidak ditemukan', 404), 404);
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
-      const body = c.body as InviteMemberBody;
-      const data = await WorkstationService.inviteMember(c.params.id, user.companyId, body);
+      const body = c.body as PickInviteMember;
+      const data = await WorkstationService.inviteMember(
+        c.params.id,
+        user.companyId,
+        body,
+      );
 
-      return c.json(successResponse('Karyawan berhasil diinvite ke workstation', data, 201), 201);
+      return HttpResponse(c).created(
+        data,
+        "Karyawan berhasil diinvite ke workstation",
+      );
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : 'Gagal menginvite karyawan';
-      return c.json(errorResponse(message, 400), 400);
+      const message =
+        error instanceof Error ? error.message : "Gagal menginvite karyawan";
+      return HttpResponse(c).badRequest(message);
     }
   }
 
-  public async removeMember(c: any) {
+  public async removeMember(c: AppContext) {
     try {
       const user = getUser(c);
 
       if (!canManageWorkstation(user)) {
-        return c.json(errorResponse('Akses ditolak', 403), 403);
+        return HttpResponse(c).forbidden("Akses ditolak");
       }
 
       if (!user.companyId) {
-        return c.json(errorResponse('Company tidak ditemukan', 404), 404);
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
       const data = await WorkstationService.removeMember(
@@ -167,12 +198,16 @@ class WorkstationController {
         c.params.userId,
       );
 
-      if (!data) return c.json(errorResponse('Anggota tidak ditemukan', 404), 404);
+      if (!data) return HttpResponse(c).notFound("Anggota tidak ditemukan");
 
-      return c.json(successResponse('Anggota berhasil dihapus dari workstation', data));
+      return HttpResponse(c).ok(
+        data,
+        undefined,
+        "Anggota berhasil dihapus dari workstation",
+      );
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal menghapus anggota', 500), 500);
+      return HttpResponse(c).internalError(error, "Gagal menghapus anggota");
     }
   }
 }

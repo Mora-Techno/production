@@ -1,28 +1,37 @@
-import NotificationService from '@/service/NotificationService';
-import { errorResponse, successResponse } from '@/http/response';
+import NotificationService from "@/service/NotificationService";
+import { HttpResponse } from "@/http";
+import type { AppContext } from "@/contex";
+import type {
+  NotificationLogQuery,
+  PickSendNotification,
+} from "@repo/types/productivity.types";
 
 class NotificationController {
-  public async send(c: any) {
+  public async send(c: AppContext) {
     try {
-      const data = await NotificationService.send(c.body);
-      return c.json(successResponse('Email berhasil dikirim', data));
+      const data = await NotificationService.send(c.body as PickSendNotification);
+      return HttpResponse(c).ok(data, undefined, "Email berhasil dikirim");
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : 'Gagal mengirim email';
-      return c.json(errorResponse(message, 500), 500);
+      const message =
+        error instanceof Error ? error.message : "Gagal mengirim email";
+      return HttpResponse(c).internalError(error, message);
     }
   }
 
-  public async listLogs(c: any) {
+  public async listLogs(c: AppContext) {
     try {
       const data = await NotificationService.listLogs({
-        status: c.query.status,
+        status: c.query.status as NotificationLogQuery["status"],
         limit: c.query.limit ? Number(c.query.limit) : undefined,
       });
-      return c.json(successResponse('Berhasil mengambil riwayat notifikasi', data));
+      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil riwayat notifikasi");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal mengambil riwayat notifikasi', 500), 500);
+      return HttpResponse(c).internalError(
+        error,
+        "Gagal mengambil riwayat notifikasi",
+      );
     }
   }
 }

@@ -31,4 +31,6 @@ export interface ApiFieldError {
   message: string;
 }
 
-export type ApiResponse<T = unknown, E = unknown> = ApiSuccessResponse<T> | ApiErrorResponse<E>;
+export type ApiResponse<T = unknown, E = unknown> =
+  | ApiSuccessResponse<T>
+  | ApiErrorResponse<E>;

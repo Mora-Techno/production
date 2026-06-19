@@ -1,46 +1,51 @@
-import CalendarService from '@/service/CalendarService';
-import { errorResponse, successResponse } from '@/http/response';
+import CalendarService from "@/service/CalendarService";
+import { HttpResponse } from "@/http";
+import type { AppContext } from "@/contex";
+import type { PickCreateEvent, PickUpdateEvent } from "@repo/types/productivity.types";
 
 class CalendarController {
-  public async list(c: any) {
+  public async list(c: AppContext) {
     try {
       const data = await CalendarService.list(c.query);
-      return c.json(successResponse('Berhasil mengambil jadwal kalender', data));
+      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil jadwal kalender");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal mengambil jadwal kalender', 500), 500);
+      return HttpResponse(c).internalError(error, "Gagal mengambil jadwal kalender");
     }
   }
 
-  public async create(c: any) {
+  public async create(c: AppContext) {
     try {
-      const data = await CalendarService.create(c.body);
-      return c.json(successResponse('Jadwal berhasil ditambahkan', data, 201), 201);
+      const data = await CalendarService.create(c.body as PickCreateEvent);
+      return HttpResponse(c).created(data, "Jadwal berhasil ditambahkan");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal menambahkan jadwal', 500), 500);
+      return HttpResponse(c).internalError(error, "Gagal menambahkan jadwal");
     }
   }
 
-  public async update(c: any) {
+  public async update(c: AppContext) {
     try {
-      const data = await CalendarService.update(c.params.id, c.body);
-      if (!data) return c.json(errorResponse('Jadwal tidak ditemukan', 404), 404);
-      return c.json(successResponse('Jadwal berhasil diperbarui', data));
+      const data = await CalendarService.update(
+        c.params.id,
+        c.body as PickUpdateEvent,
+      );
+      if (!data) return HttpResponse(c).notFound("Jadwal tidak ditemukan");
+      return HttpResponse(c).ok(data, undefined, "Jadwal berhasil diperbarui");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal memperbarui jadwal', 500), 500);
+      return HttpResponse(c).internalError(error, "Gagal memperbarui jadwal");
     }
   }
 
-  public async remove(c: any) {
+  public async remove(c: AppContext) {
     try {
       const data = await CalendarService.remove(c.params.id);
-      if (!data) return c.json(errorResponse('Jadwal tidak ditemukan', 404), 404);
-      return c.json(successResponse('Jadwal berhasil dihapus', data));
+      if (!data) return HttpResponse(c).notFound("Jadwal tidak ditemukan");
+      return HttpResponse(c).ok(data, undefined, "Jadwal berhasil dihapus");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal menghapus jadwal', 500), 500);
+      return HttpResponse(c).internalError(error, "Gagal menghapus jadwal");
     }
   }
 }

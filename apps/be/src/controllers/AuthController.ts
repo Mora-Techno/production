@@ -1,45 +1,30 @@
-import bcryptjs from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import type { CompanyRole } from '@/types/company.types';
-import { errorResponse, successResponse } from '@/http/response';
-import type {
-  PickRegister,
+import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
+import type { CompanyRole } from "@repo/types/company.types";
+import { HttpResponse } from "@/http";
+import {
   PickLogin,
-  PickLogout,
+  PickRegister,
+  PickRefreshToken,
+  PickSendMagicLink,
+  PickVerifyMagicLink,
+  PickVerifyOtp,
+  PickSendOtp,
   JwtPayload,
-  RefreshTokenBody,
-  SendMagicLinkBody,
-  VerifyMagicLinkBody,
-  SendOtpBody,
-  VerifyOtpBody,
-} from '@/types/auth.types';
-import AuthService from '@/service/AuthService';
-import prisma from 'prisma/client';
-
-function sanitizeUser(user: {
-  id: string;
-  email: string;
-  phone?: string | null;
-  fullName: string;
-  companyRole: CompanyRole;
-  companyId?: string | null;
-  isVerify?: boolean | null;
-  password?: string;
-  token?: string | null;
-  createdAt?: Date;
-  updatedAt?: Date;
-}) {
-  const { password: _password, token: _token, ...safe } = user;
-  return safe;
-}
+  PickLogout,
+} from "@repo/types/auth.types";
+import AuthService from "@/service/AuthService";
+import prisma from "prisma/client";
+import { sanitizeUser } from "@/utils/authTokens";
+import type { AppContext } from "@/contex";
 
 class AuthController {
-  public async register(c: any) {
+  public async register(c: AppContext) {
     try {
-      const auth: PickRegister = c.body;
+      const auth = c.body as PickRegister;
 
       if (!auth.email || !auth.fullName || !auth.password) {
-        return c.json(errorResponse('Semua field wajib diisi', 400), 400);
+        return HttpResponse(c).badRequest("Semua field wajib diisi");
       }
 
       const isAlreadyRegistered = await prisma.user.findUnique({
@@ -47,7 +32,7 @@ class AuthController {
       });
 
       if (isAlreadyRegistered) {
-        return c.json(errorResponse('Email sudah terdaftar', 400), 400);
+        return HttpResponse(c).badRequest("Email sudah terdaftar");
       }
 
       if (auth.phone) {
@@ -55,7 +40,7 @@ class AuthController {
           where: { phone: auth.phone },
         });
         if (phoneTaken) {
-          return c.json(errorResponse('Nomor telepon sudah terdaftar', 400), 400);
+          return HttpResponse(c).badRequest("Nomor telepon sudah terdaftar");
         }
       }
 
@@ -67,162 +52,193 @@ class AuthController {
           fullName: auth.fullName,
           password: hashedPassword,
           phone: auth.phone ?? null,
-          companyRole: (auth.companyRole ?? 'employee') as CompanyRole,
+          companyRole: (auth.companyRole ?? "employee") as CompanyRole,
         },
       });
 
-      return c.json(successResponse('Akun berhasil didaftarkan', sanitizeUser(newUser), 201), 201);
+      return HttpResponse(c).created(
+        sanitizeUser(newUser),
+        "Akun berhasil didaftarkan",
+      );
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Terjadi kesalahan server', 500), 500);
+      return HttpResponse(c).internalError(error);
     }
   }
 
-  public async login(c: any) {
+  public async login(c: AppContext) {
     try {
-      const auth: PickLogin = c.body;
+      const auth = c.body as PickLogin;
 
       if (!auth.email || !auth.password) {
-        return c.json(errorResponse('Semua field wajib diisi', 400), 400);
+        return HttpResponse(c).badRequest("Semua field wajib diisi");
       }
 
       const user = await prisma.user.findUnique({
         where: { email: auth.email },
       });
-      if (!user) return c.json(errorResponse('Akun tidak ditemukan', 404), 404);
+      if (!user) return HttpResponse(c).notFound("Akun tidak ditemukan");
 
-      const validatePassword = await bcryptjs.compare(auth.password, user.password);
-      if (!validatePassword) return c.json(errorResponse('Email atau password salah', 400), 400);
+      const validatePassword = await bcryptjs.compare(
+        auth.password,
+        user.password,
+      );
+      if (!validatePassword) {
+        return HttpResponse(c).badRequest("Email atau password salah");
+      }
 
       const session = await AuthService.createSession(user);
 
-      return c.json(successResponse('Login berhasil', session));
+      return HttpResponse(c).ok(session, undefined, "Login berhasil");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Terjadi kesalahan server', 500), 500);
+      return HttpResponse(c).internalError(error);
     }
   }
 
-  public async refresh(c: any) {
+  public async refresh(c: AppContext) {
     try {
-      const { refreshToken } = c.body as RefreshTokenBody;
+      const { refreshToken } = c.body as PickRefreshToken;
 
       if (!refreshToken) {
-        return c.json(errorResponse('Refresh token wajib diisi', 400), 400);
+        return HttpResponse(c).badRequest("Refresh token wajib diisi");
       }
 
       const session = await AuthService.refreshAccessToken(refreshToken);
-      return c.json(successResponse('Token berhasil diperbarui', session));
+      return HttpResponse(c).ok(
+        session,
+        undefined,
+        "Token berhasil diperbarui",
+      );
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : 'Gagal memperbarui token';
-      return c.json(errorResponse(message, 401), 401);
+      const message =
+        error instanceof Error ? error.message : "Gagal memperbarui token";
+      return HttpResponse(c).unauthorized(message);
     }
   }
 
-  public async sendMagicLink(c: any) {
+  public async sendMagicLink(c: AppContext) {
     try {
-      const body = c.body as SendMagicLinkBody;
+      const body = c.body as PickSendMagicLink;
 
       if (!body.email) {
-        return c.json(errorResponse('Email wajib diisi', 400), 400);
+        return HttpResponse(c).badRequest("Email wajib diisi");
       }
 
       await AuthService.sendMagicLink(body);
-      return c.json(
-        successResponse('Magic link berhasil dikirim ke email', {
-          email: body.email,
-        }),
+      return HttpResponse(c).ok(
+        { email: body.email },
+        undefined,
+        "Magic link berhasil dikirim ke email",
       );
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : 'Gagal mengirim magic link';
-      return c.json(errorResponse(message, 400), 400);
+      const message =
+        error instanceof Error ? error.message : "Gagal mengirim magic link";
+      return HttpResponse(c).badRequest(message);
     }
   }
 
-  public async verifyMagicLink(c: any) {
+  public async verifyMagicLink(c: AppContext) {
     try {
-      const body = c.body as VerifyMagicLinkBody;
+      const body = c.body as PickVerifyMagicLink;
 
       if (!body.token) {
-        return c.json(errorResponse('Token wajib diisi', 400), 400);
+        return HttpResponse(c).badRequest("Token wajib diisi");
       }
 
       const session = await AuthService.verifyMagicLink(body);
-      return c.json(successResponse('Magic link berhasil diverifikasi', session));
-    } catch (error) {
-      console.error(error);
-      const message = error instanceof Error ? error.message : 'Magic link tidak valid';
-      return c.json(errorResponse(message, 401), 401);
-    }
-  }
-
-  public async sendOtp(c: any) {
-    try {
-      const body = c.body as SendOtpBody;
-
-      if (!body.email && !body.phone) {
-        return c.json(errorResponse('Email atau nomor telepon wajib diisi', 400), 400);
-      }
-
-      const result = await AuthService.sendOtp(body);
-      return c.json(
-        successResponse('OTP berhasil dikirim', {
-          ...result,
-          sentTo: body.phone ? 'phone' : 'email',
-        }),
+      return HttpResponse(c).ok(
+        session,
+        undefined,
+        "Magic link berhasil diverifikasi",
       );
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : 'Gagal mengirim OTP';
-      return c.json(errorResponse(message, 400), 400);
+      const message =
+        error instanceof Error ? error.message : "Magic link tidak valid";
+      return HttpResponse(c).unauthorized(message);
     }
   }
 
-  public async verifyOtp(c: any) {
+  public async sendOtp(c: AppContext) {
     try {
-      const body = c.body as VerifyOtpBody;
+      const body = c.body as PickSendOtp;
 
       if (!body.email && !body.phone) {
-        return c.json(errorResponse('Email atau nomor telepon wajib diisi', 400), 400);
+        return HttpResponse(c).badRequest(
+          "Email atau nomor telepon wajib diisi",
+        );
+      }
+
+      const result = await AuthService.sendOtp(body);
+      return HttpResponse(c).ok(
+        {
+          ...result,
+          sentTo: body.phone ? "phone" : "email",
+        },
+        undefined,
+        "OTP berhasil dikirim",
+      );
+    } catch (error) {
+      console.error(error);
+      const message =
+        error instanceof Error ? error.message : "Gagal mengirim OTP";
+      return HttpResponse(c).badRequest(message);
+    }
+  }
+
+  public async verifyOtp(c: AppContext) {
+    try {
+      const body = c.body as PickVerifyOtp;
+
+      if (!body.email && !body.phone) {
+        return HttpResponse(c).badRequest(
+          "Email atau nomor telepon wajib diisi",
+        );
       }
 
       if (!body.otp) {
-        return c.json(errorResponse('OTP wajib diisi', 400), 400);
+        return HttpResponse(c).badRequest("OTP wajib diisi");
       }
 
       const session = await AuthService.verifyOtp(body);
-      return c.json(successResponse('OTP berhasil diverifikasi', session));
+      return HttpResponse(c).ok(
+        session,
+        undefined,
+        "OTP berhasil diverifikasi",
+      );
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : 'OTP tidak valid';
-      return c.json(errorResponse(message, 401), 401);
+      const message =
+        error instanceof Error ? error.message : "OTP tidak valid";
+      return HttpResponse(c).unauthorized(message);
     }
   }
 
-  public async logout(c: any) {
+  public async logout(c: AppContext) {
     try {
-      const authHeader = c.request.headers.get('authorization');
-      const token = authHeader?.split(' ')[1];
+      const authHeader = c.request.headers.get("authorization");
+      const token = authHeader?.split(" ")[1];
 
       if (!token) {
-        return c.json(errorResponse('Token tidak ditemukan', 401), 401);
+        return HttpResponse(c).unauthorized("Token tidak ditemukan");
       }
 
-      if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET not set');
+      if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET not set");
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
       const { id }: PickLogout = decoded;
 
       const user = await prisma.user.findUnique({ where: { id } });
-      if (!user) return c.json(errorResponse('Akun tidak ditemukan', 404), 404);
+      if (!user) return HttpResponse(c).notFound("Akun tidak ditemukan");
 
       await AuthService.revokeTokens(id);
-      return c.json(successResponse('Logout berhasil', null));
+      return HttpResponse(c).ok(null, undefined, "Logout berhasil");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Token tidak valid', 401), 401);
+      return HttpResponse(c).unauthorized("Token tidak valid");
     }
   }
 }

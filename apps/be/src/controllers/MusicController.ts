@@ -1,35 +1,37 @@
-import MusicService from '@/service/MusicService';
-import { errorResponse, successResponse } from '@/http/response';
+import MusicService from "@/service/MusicService";
+import { HttpResponse } from "@/http";
+import type { AppContext } from "@/contex";
+import type { PickCreatePlaylist } from "@repo/types/productivity.types";
 
 class MusicController {
-  public async list(c: any) {
+  public async list(c: AppContext) {
     try {
       const data = await MusicService.list();
-      return c.json(successResponse('Berhasil mengambil daftar playlist', data));
+      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil daftar playlist");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal mengambil daftar playlist', 500), 500);
+      return HttpResponse(c).internalError(error, "Gagal mengambil daftar playlist");
     }
   }
 
-  public async create(c: any) {
+  public async create(c: AppContext) {
     try {
-      const data = await MusicService.create(c.body);
-      return c.json(successResponse('Playlist berhasil ditambahkan', data, 201), 201);
+      const data = await MusicService.create(c.body as PickCreatePlaylist);
+      return HttpResponse(c).created(data, "Playlist berhasil ditambahkan");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal menambahkan playlist', 500), 500);
+      return HttpResponse(c).internalError(error, "Gagal menambahkan playlist");
     }
   }
 
-  public async remove(c: any) {
+  public async remove(c: AppContext) {
     try {
       const data = await MusicService.remove(c.params.id);
-      if (!data) return c.json(errorResponse('Playlist tidak ditemukan', 404), 404);
-      return c.json(successResponse('Playlist berhasil dihapus', data));
+      if (!data) return HttpResponse(c).notFound("Playlist tidak ditemukan");
+      return HttpResponse(c).ok(data, undefined, "Playlist berhasil dihapus");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal menghapus playlist', 500), 500);
+      return HttpResponse(c).internalError(error, "Gagal menghapus playlist");
     }
   }
 }

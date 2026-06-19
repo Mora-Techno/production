@@ -1,12 +1,12 @@
-import prisma from 'prisma/client';
-import type { UpdateSettingsBody } from '@/types/settings.types';
+import prisma from "prisma/client";
+import type { PickUpdateSettings } from "@repo/types/productivity.types";
 
-const DEFAULT_SETTINGS_ID = 'default';
+const DEFAULT_SETTINGS_ID = "default";
 
 class SettingsService {
   private async ensureDefault() {
     const existing = await prisma.settings.findFirst({
-      orderBy: { createdAt: 'asc' },
+      orderBy: { createdAt: "asc" },
     });
 
     if (existing) return existing;
@@ -14,9 +14,9 @@ class SettingsService {
     return prisma.settings.create({
       data: {
         id: DEFAULT_SETTINGS_ID,
-        timeFormat: '24h',
+        timeFormat: "24h",
         defaultNotifications: true,
-        theme: 'system',
+        theme: "system",
       },
     });
   }
@@ -25,7 +25,7 @@ class SettingsService {
     return this.ensureDefault();
   }
 
-  public async update(input: UpdateSettingsBody) {
+  public async update(input: PickUpdateSettings) {
     const current = await this.ensureDefault();
 
     return prisma.settings.update({

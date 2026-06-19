@@ -1,6 +1,10 @@
-import type { TodoStatus } from '@prisma/client';
-import prisma from 'prisma/client';
-import type { CreateTodoBody, TodoQuery, UpdateTodoBody } from '@/types/todo.types';
+import type { TodoStatus } from "@prisma/client";
+import prisma from "prisma/client";
+import type {
+  PickCreateTodo,
+  PickUpdateTodo,
+  TodoQuery,
+} from "@repo/types/productivity.types";
 
 class TodoService {
   public async list(query: TodoQuery) {
@@ -13,7 +17,7 @@ class TodoService {
       where.status = query.status;
     }
 
-    if (query.date === 'today') {
+    if (query.date === "today") {
       const start = new Date();
       start.setHours(0, 0, 0, 0);
       const end = new Date(start);
@@ -23,11 +27,11 @@ class TodoService {
 
     return prisma.todo.findMany({
       where,
-      orderBy: [{ status: 'asc' }, { createdAt: 'desc' }],
+      orderBy: [{ status: "asc" }, { createdAt: "desc" }],
     });
   }
 
-  public async create(input: CreateTodoBody) {
+  public async create(input: PickCreateTodo) {
     return prisma.todo.create({
       data: {
         text: input.text,
@@ -36,7 +40,7 @@ class TodoService {
     });
   }
 
-  public async update(id: string, input: UpdateTodoBody) {
+  public async update(id: string, input: PickUpdateTodo) {
     const existing = await prisma.todo.findUnique({ where: { id } });
     if (!existing) return null;
 

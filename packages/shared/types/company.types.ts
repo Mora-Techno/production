@@ -1,37 +1,53 @@
-export type CompanyRole = 'leader' | 'admin' | 'employee';
-export type SubscriptionTier = 'free' | 'pro' | 'enterprise';
-export type BillingCycle = 'monthly' | 'yearly';
+import type { IAuth } from "./auth.types";
 
-export type PickRegisterCompany = {
-  companyName: string;
-  email: string;
-  fullName: string;
-  password: string;
-  tier?: SubscriptionTier;
-};
+export type CompanyRole = "leader" | "admin" | "employee";
+export type SubscriptionTier = "free" | "pro" | "enterprise";
+export type BillingCycle = "monthly" | "yearly";
 
-export type PickCreateAdmin = {
-  email: string;
-  fullName: string;
-  password: string;
-};
-
-export type PickUpdateCompanySubscription = {
-  tier: SubscriptionTier;
-  billingCycle?: BillingCycle;
-};
-
-export interface CompanyProfile {
+export interface ICompany {
   id: string;
   name: string;
   tier: SubscriptionTier;
   billingCycle: BillingCycle;
-  subscriptionStartsAt: string;
-  subscriptionEndsAt: string | null;
+  subscriptionStartsAt: Date;
+  subscriptionEndsAt: Date | null;
   leaderId: string;
+  stripeCustomerId: string | null;
+  xenditCustomerId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type PickRegisterCompany = Pick<IAuth, "email" | "fullName" | "password"> &
+  Partial<Pick<ICompany, "tier">> & {
+    companyName: string;
+  };
+
+export type { PickCreateAdmin } from "./auth.types";
+
+export type PickUpdateCompanySubscription = Pick<ICompany, "tier" | "billingCycle">;
+
+export type CompanyParams = Pick<ICompany, "id">;
+
+export type SafeUser = Pick<
+  IAuth,
+  "id" | "email" | "fullName" | "companyRole" | "companyId" | "createdAt" | "updatedAt"
+>;
+
+export interface CompanyProfile
+  extends Pick<
+    ICompany,
+    | "id"
+    | "name"
+    | "tier"
+    | "billingCycle"
+    | "subscriptionStartsAt"
+    | "subscriptionEndsAt"
+    | "leaderId"
+    | "createdAt"
+    | "updatedAt"
+  > {
   maxWorkstationUsers: number;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface AdminUser {

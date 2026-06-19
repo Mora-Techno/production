@@ -1,4 +1,11 @@
-import { randomBytes } from 'node:crypto';
+import { randomBytes } from "node:crypto";
+import type { CompanyRole } from "@repo/types/company.types";
+import { AuthTokensResponse, SafeAuthUser } from "@repo/types/auth.types";
+import { JwtPayload } from "@repo/types/auth.types";
+import jwt from "jsonwebtoken";
+import { getJwtSecret } from "./jwt.utils";
+import prisma from "prisma/client";
+import bcryptjs from "bcryptjs";
 
 const OTP_EXPIRY_MINUTES = 5;
 const MAGIC_LINK_EXPIRY_MINUTES = 15;
@@ -9,7 +16,7 @@ export function generateOtp(): string {
 }
 
 export function generateSecureToken(): string {
-  return randomBytes(32).toString('hex');
+  return randomBytes(32).toString("hex");
 }
 
 export function getOtpExpiry(): Date {
@@ -31,8 +38,66 @@ export function getRefreshTokenExpiry(): Date {
 }
 
 export const AUTH_EXPIRY = {
-  accessToken: '15m',
+  accessToken: "15m",
   refreshTokenDays: REFRESH_TOKEN_EXPIRY_DAYS,
   otpMinutes: OTP_EXPIRY_MINUTES,
   magicLinkMinutes: MAGIC_LINK_EXPIRY_MINUTES,
 } as const;
+
+export function sanitizeUser(user: {
+  id: string;
+  email: string;
+  phone?: string | null;
+  fullName: string;
+  companyRole: CompanyRole;
+  companyId?: string | null;
+  isVerify?: boolean | null;
+  password?: string;
+  token?: string | null;
+  createdAt?: Date;
+  updatedAt?: Date;
+}) {
+  const { password: _password, token: _token, ...safe } = user;
+  return safe;
+}
+
+export function buildPayload(user: SafeAuthUser): JwtPayload {
+  return {
+    id: user.id,
+    email: user.email,
+    fullName: user.fullName,
+    companyRole: user.companyRole,
+    companyId: user.companyId,
+  };
+}
+
+export function signAccessToken(payload: JwtPayload): string {
+  return jwt.sign(payload, getJwtSecret(), {
+    expiresIn: AUTH_EXPIRY.accessToken,
+  });
+}
+
+export async function createTokenPair(
+  user: SafeAuthUser,
+): Promise<AuthTokensResponse> {
+  const payload = buildPayload(user);
+  const accessToken = signAccessToken(payload);
+  const refreshToken = generateSecureToken();
+
+  const hashedRefreshToken = await bcryptjs.hash(refreshToken, 10);
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      token: accessToken,
+      refreshToken: hashedRefreshToken,
+      refreshTokenExpiresAt: getRefreshTokenExpiry(),
+    },
+  });
+
+  return {
+    accessToken,
+    refreshToken,
+    expiresIn: AUTH_EXPIRY.accessToken,
+  };
+}

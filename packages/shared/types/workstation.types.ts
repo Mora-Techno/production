@@ -1,39 +1,42 @@
-export type WorkstationMemberRole = 'admin' | 'member';
+import type { CompanyRole } from "./company.types";
+import type { IAuth } from "./auth.types";
 
-export type PickCreateWorkstation = {
-  name: string;
-};
+export type WorkstationMemberRole = "admin" | "member";
 
-export type PickUpdateWorkstation = {
-  name?: string;
-};
-
-export type PickInviteMember = {
-  email: string;
-  fullName: string;
-  password: string;
-  role?: WorkstationMemberRole;
-};
-
-export interface WorkstationMember {
-  id: string;
-  workstationId: string;
-  userId: string;
-  role: WorkstationMemberRole;
-  joinedAt: string;
-  user: {
-    id: string;
-    email: string;
-    fullName: string;
-    companyRole: string;
-  };
-}
-
-export interface Workstation {
+export interface IWorkstation {
   id: string;
   name: string;
   companyId: string;
   createdById: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IWorkstationMember {
+  id: string;
+  workstationId: string;
+  userId: string;
+  role: WorkstationMemberRole;
+  joinedAt: Date;
+}
+
+export type PickCreateWorkstation = Pick<IWorkstation, "name">;
+export type PickUpdateWorkstation = Partial<Pick<IWorkstation, "name">>;
+export type WorkstationParams = Pick<IWorkstation, "id">;
+
+export type PickInviteMember = Pick<IAuth, "email" | "fullName" | "password"> &
+  Partial<Pick<IWorkstationMember, "role">>;
+
+export interface WorkstationMember
+  extends Pick<IWorkstationMember, "id" | "workstationId" | "userId" | "role"> {
+  joinedAt: string;
+  user: Pick<IAuth, "id" | "email" | "fullName"> & {
+    companyRole: CompanyRole | string;
+  };
+}
+
+export interface Workstation
+  extends Pick<IWorkstation, "id" | "name" | "companyId" | "createdById"> {
   memberCount: number;
   maxMembers: number;
   createdAt: string;

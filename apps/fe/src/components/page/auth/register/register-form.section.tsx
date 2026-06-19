@@ -1,36 +1,43 @@
-'use client';
+import { PickRegister } from "@repo/types";
+import { DecoratedInput, ActionButton } from "@/components/wrapper";
+import { Eye, EyeClosed } from "lucide-react";
 
-import { useState } from 'react';
-
-import { Button } from '@/components/atoms';
-import { useRegister } from '@/hooks/auth';
-
-export function RegisterFormSection() {
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const register = useRegister();
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    register.mutate({
-      fullName: fullName.trim(),
-      email: email.trim(),
-      password,
-    });
+interface RegisterFormSectionProps {
+  service: {
+    onSubmit: (e: React.FormEvent) => void;
+    isPending: boolean;
   };
 
+  state: {
+    formRegister: PickRegister;
+    setFormRegister: React.Dispatch<React.SetStateAction<PickRegister>>;
+    showPassword: boolean;
+    setShowPassword: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+}
+const RegisterFormSection: React.FC<RegisterFormSectionProps> = ({
+  service,
+  state,
+}) => {
+  const { isPending, onSubmit } = service;
+  const { formRegister, setFormRegister, showPassword, setShowPassword } =
+    state;
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={onSubmit} className="space-y-4">
       <div className="space-y-2">
         <label htmlFor="fullName" className="text-sm font-medium">
           Nama Lengkap
         </label>
-        <input
+        <DecoratedInput
           id="fullName"
           type="text"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
+          value={formRegister.fullName}
+          onChange={(e) =>
+            setFormRegister((prev) => ({
+              ...prev,
+              fullName: e.target.value,
+            }))
+          }
           required
           placeholder="Nama kamu"
           className="w-full rounded-xl border border-input bg-background/80 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring"
@@ -40,11 +47,16 @@ export function RegisterFormSection() {
         <label htmlFor="email" className="text-sm font-medium">
           Email
         </label>
-        <input
+        <DecoratedInput
           id="email"
           type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={formRegister.email}
+          onChange={(e) =>
+            setFormRegister((prev) => ({
+              ...prev,
+              email: e.target.value,
+            }))
+          }
           required
           placeholder="nama@email.com"
           className="w-full rounded-xl border border-input bg-background/80 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring"
@@ -54,20 +66,44 @@ export function RegisterFormSection() {
         <label htmlFor="password" className="text-sm font-medium">
           Password
         </label>
-        <input
+        <DecoratedInput
           id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          type={showPassword ? "text" : "password"}
+          value={formRegister.password}
+          iconRight={
+            showPassword ? (
+              <EyeClosed
+                onClick={() => setShowPassword(false)}
+                className="text-foreground  cursor-pointer relative"
+              />
+            ) : (
+              <Eye
+                onClick={() => setShowPassword(true)}
+                className="text-foreground cursor-pointer relative"
+              />
+            )
+          }
+          onChange={(e) =>
+            setFormRegister((prev) => ({
+              ...prev,
+              password: e.target.value,
+            }))
+          }
           required
           minLength={6}
           placeholder="Minimal 6 karakter"
           className="w-full rounded-xl border border-input bg-background/80 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring"
         />
       </div>
-      <Button type="submit" className="ghibli-btn w-full" disabled={register.isPending}>
-        {register.isPending ? 'Memproses...' : 'Daftar'}
-      </Button>
+      <ActionButton
+        type="submit"
+        className="ghibli-btn w-full"
+        disabled={isPending}
+      >
+        {isPending ? "Memproses..." : "Daftar"}
+      </ActionButton>
     </form>
   );
-}
+};
+
+export default RegisterFormSection;

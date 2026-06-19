@@ -1,29 +1,35 @@
-import prisma from 'prisma/client';
-import type { Prisma } from '@prisma/client';
-import StripeService from '@/service/StripeService';
-import XenditService from '@/service/XenditService';
-import { SUBSCRIPTION_PLANS, getPeriodEnd, getPlanPrice } from '@/config/subscriptionPlans';
-import { getWorkstationUserLimit } from '@/utils/tierLimits';
-import type { BillingCycle, SubscriptionTier } from '@/types/company.types';
+import prisma from "prisma/client";
+import type { Prisma } from "@prisma/client";
+import StripeService from "@/service/StripeService";
+import XenditService from "@/service/XenditService";
+import {
+  SUBSCRIPTION_PLANS,
+  getPeriodEnd,
+  getPlanPrice,
+} from "@/config/subscriptionPlans";
+import { getWorkstationUserLimit } from "@/utils/tierLimits";
+import type { BillingCycle, SubscriptionTier } from "@repo/types/company.types";
 import type {
-  CheckoutResponse,
-  CreateCheckoutBody,
+  CheckoutData,
   PaymentProvider,
-  SubscriptionDetailResponse,
-} from '@/types/subscription.types';
+  PickCreateCheckout,
+  SubscriptionDetail,
+} from "@repo/types/subscription.types";
 
 class SubscriptionService {
   public listPlans() {
     return SUBSCRIPTION_PLANS;
   }
 
-  public async getDetail(companyId: string): Promise<SubscriptionDetailResponse | null> {
+  public async getDetail(
+    companyId: string,
+  ): Promise<SubscriptionDetail | null> {
     const company = await prisma.company.findUnique({
       where: { id: companyId },
       include: {
         subscription: true,
         payments: {
-          orderBy: { createdAt: 'desc' },
+          orderBy: { createdAt: "desc" },
           take: 10,
         },
       },
@@ -37,8 +43,8 @@ class SubscriptionService {
         name: company.name,
         tier: company.tier,
         billingCycle: company.billingCycle,
-        subscriptionStartsAt: company.subscriptionStartsAt,
-        subscriptionEndsAt: company.subscriptionEndsAt,
+        subscriptionStartsAt: company.subscriptionStartsAt.toISOString(),
+        subscriptionEndsAt: company.subscriptionEndsAt?.toISOString() ?? null,
         maxWorkstationUsers: getWorkstationUserLimit(company.tier),
       },
       subscription: company.subscription
@@ -49,10 +55,14 @@ class SubscriptionService {
             billingCycle: company.subscription.billingCycle,
             status: company.subscription.status,
             provider: company.subscription.provider,
-            currentPeriodStart: company.subscription.currentPeriodStart,
-            currentPeriodEnd: company.subscription.currentPeriodEnd,
+            currentPeriodStart:
+              company.subscription.currentPeriodStart?.toISOString() ?? null,
+            currentPeriodEnd:
+              company.subscription.currentPeriodEnd?.toISOString() ?? null,
             cancelAtPeriodEnd: company.subscription.cancelAtPeriodEnd,
-            maxWorkstationUsers: getWorkstationUserLimit(company.subscription.tier),
+            maxWorkstationUsers: getWorkstationUserLimit(
+              company.subscription.tier,
+            ),
           }
         : null,
       recentPayments: company.payments.map((payment) => ({
@@ -63,7 +73,7 @@ class SubscriptionService {
         status: payment.status,
         tier: payment.tier,
         billingCycle: payment.billingCycle,
-        createdAt: payment.createdAt,
+        createdAt: payment.createdAt.toISOString(),
       })),
     };
   }
@@ -91,11 +101,11 @@ class SubscriptionService {
           billingCycle: input.billingCycle,
           subscriptionStartsAt: now,
           subscriptionEndsAt: periodEnd,
-          ...(input.provider === 'stripe' &&
+          ...(input.provider === "stripe" &&
             input.providerCustomerId && {
               stripeCustomerId: input.providerCustomerId,
             }),
-          ...(input.provider === 'xendit' &&
+          ...(input.provider === "xendit" &&
             input.providerCustomerId && {
               xenditCustomerId: input.providerCustomerId,
             }),
@@ -108,7 +118,7 @@ class SubscriptionService {
           companyId: input.companyId,
           tier: input.tier,
           billingCycle: input.billingCycle,
-          status: 'active',
+          status: "active",
           provider: input.provider,
           providerCustomerId: input.providerCustomerId ?? null,
           providerSubscriptionId: input.providerSubscriptionId ?? null,
@@ -119,7 +129,7 @@ class SubscriptionService {
         update: {
           tier: input.tier,
           billingCycle: input.billingCycle,
-          status: 'active',
+          status: "active",
           provider: input.provider,
           providerCustomerId: input.providerCustomerId ?? null,
           providerSubscriptionId: input.providerSubscriptionId ?? null,
@@ -137,7 +147,7 @@ class SubscriptionService {
           providerPaymentId: input.providerPaymentId ?? null,
           amount: input.amount,
           currency: input.currency,
-          status: input.amount === 0 ? 'paid' : 'paid',
+          status: input.amount === 0 ? "paid" : "paid",
           tier: input.tier,
           billingCycle: input.billingCycle,
           metadata: input.metadata as Prisma.InputJsonValue | undefined,
@@ -151,14 +161,18 @@ class SubscriptionService {
   public async createCheckout(
     companyId: string,
     leader: { email: string; fullName: string },
-    input: CreateCheckoutBody,
-  ): Promise<CheckoutResponse> {
-    if (input.tier === 'free') {
-      const { amount, currency } = getPlanPrice('free', input.billingCycle, input.provider);
+    input: PickCreateCheckout,
+  ): Promise<CheckoutData> {
+    if (input.tier === "free") {
+      const { amount, currency } = getPlanPrice(
+        "free",
+        input.billingCycle,
+        input.provider,
+      );
 
       await this.activateSubscription({
         companyId,
-        tier: 'free',
+        tier: "free",
         billingCycle: input.billingCycle,
         provider: input.provider,
         amount,
@@ -168,7 +182,7 @@ class SubscriptionService {
       return {
         provider: input.provider,
         checkoutUrl: null,
-        sessionId: 'free-tier',
+        sessionId: "free-tier",
         tier: input.tier,
         billingCycle: input.billingCycle,
         amount,
@@ -176,13 +190,15 @@ class SubscriptionService {
       };
     }
 
-    const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
+    const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:3000";
     const successUrl = `${frontendUrl}/subscription/success?provider=${input.provider}`;
     const cancelUrl = `${frontendUrl}/subscription/cancel?provider=${input.provider}`;
 
-    if (input.provider === 'stripe') {
+    if (input.provider === "stripe") {
       if (!StripeService.isConfigured()) {
-        throw new Error('Stripe belum dikonfigurasi. Isi STRIPE_SECRET_KEY di .env');
+        throw new Error(
+          "Stripe belum dikonfigurasi. Isi STRIPE_SECRET_KEY di .env",
+        );
       }
 
       const session = await StripeService.createCheckoutSession({
@@ -197,18 +213,18 @@ class SubscriptionService {
       await prisma.payment.create({
         data: {
           companyId,
-          provider: 'stripe',
+          provider: "stripe",
           providerPaymentId: session.sessionId,
           amount: session.amount,
           currency: session.currency,
-          status: 'pending',
+          status: "pending",
           tier: input.tier,
           billingCycle: input.billingCycle,
         },
       });
 
       return {
-        provider: 'stripe',
+        provider: "stripe",
         checkoutUrl: session.checkoutUrl,
         sessionId: session.sessionId,
         tier: input.tier,
@@ -219,7 +235,9 @@ class SubscriptionService {
     }
 
     if (!XenditService.isConfigured()) {
-      throw new Error('Xendit belum dikonfigurasi. Isi XENDIT_SECRET_KEY di .env');
+      throw new Error(
+        "Xendit belum dikonfigurasi. Isi XENDIT_SECRET_KEY di .env",
+      );
     }
 
     const invoice = await XenditService.createInvoice({
@@ -235,11 +253,11 @@ class SubscriptionService {
     await prisma.payment.create({
       data: {
         companyId,
-        provider: 'xendit',
+        provider: "xendit",
         providerPaymentId: invoice.sessionId,
         amount: invoice.amount,
         currency: invoice.currency,
-        status: 'pending',
+        status: "pending",
         tier: input.tier,
         billingCycle: input.billingCycle,
         metadata: { externalId: invoice.externalId },
@@ -247,7 +265,7 @@ class SubscriptionService {
     });
 
     return {
-      provider: 'xendit',
+      provider: "xendit",
       checkoutUrl: invoice.checkoutUrl,
       sessionId: invoice.sessionId,
       tier: input.tier,
@@ -263,7 +281,7 @@ class SubscriptionService {
     });
 
     if (!subscription) {
-      throw new Error('Langganan aktif tidak ditemukan');
+      throw new Error("Langganan aktif tidak ditemukan");
     }
 
     const now = new Date();
@@ -272,7 +290,7 @@ class SubscriptionService {
       await tx.subscription.update({
         where: { companyId },
         data: {
-          status: 'canceled',
+          status: "canceled",
           cancelAtPeriodEnd: true,
         },
       });
@@ -280,8 +298,8 @@ class SubscriptionService {
       return tx.company.update({
         where: { id: companyId },
         data: {
-          tier: 'free',
-          billingCycle: 'monthly',
+          tier: "free",
+          billingCycle: "monthly",
           subscriptionEndsAt: now,
         },
       });
@@ -291,7 +309,7 @@ class SubscriptionService {
   public async handleStripeWebhook(payload: string, signature: string | null) {
     const event = StripeService.constructWebhookEvent(payload, signature);
 
-    if (event.type === 'checkout.session.completed') {
+    if (event.type === "checkout.session.completed") {
       const session = event.data.object as {
         id: string;
         metadata?: Record<string, string>;
@@ -303,31 +321,33 @@ class SubscriptionService {
 
       const companyId = session.metadata?.companyId;
       const tier = session.metadata?.tier as SubscriptionTier | undefined;
-      const billingCycle = session.metadata?.billingCycle as BillingCycle | undefined;
+      const billingCycle = session.metadata?.billingCycle as
+        | BillingCycle
+        | undefined;
 
       if (!companyId || !tier || !billingCycle) {
-        throw new Error('Metadata checkout Stripe tidak lengkap');
+        throw new Error("Metadata checkout Stripe tidak lengkap");
       }
 
       await prisma.payment.updateMany({
         where: {
           companyId,
-          provider: 'stripe',
+          provider: "stripe",
           providerPaymentId: session.id,
         },
-        data: { status: 'paid' },
+        data: { status: "paid" },
       });
 
       await this.activateSubscription({
         companyId,
         tier,
         billingCycle,
-        provider: 'stripe',
+        provider: "stripe",
         providerCustomerId: session.customer ?? null,
         providerSubscriptionId: session.subscription ?? null,
         providerPaymentId: session.id,
         amount: session.amount_total ?? 0,
-        currency: session.currency ?? 'usd',
+        currency: session.currency ?? "usd",
         metadata: session.metadata,
       });
     }
@@ -335,36 +355,39 @@ class SubscriptionService {
     return { received: true, type: event.type };
   }
 
-  public async handleXenditWebhook(payload: Record<string, unknown>, callbackToken: string | null) {
+  public async handleXenditWebhook(
+    payload: Record<string, unknown>,
+    callbackToken: string | null,
+  ) {
     if (!XenditService.verifyWebhookToken(callbackToken)) {
-      throw new Error('Xendit webhook token tidak valid');
+      throw new Error("Xendit webhook token tidak valid");
     }
 
-    const status = String(payload.status ?? '');
+    const status = String(payload.status ?? "");
     const metadata = (payload.metadata ?? {}) as Record<string, string>;
     const companyId = metadata.companyId;
     const tier = metadata.tier as SubscriptionTier | undefined;
     const billingCycle = metadata.billingCycle as BillingCycle | undefined;
-    const invoiceId = String(payload.id ?? '');
+    const invoiceId = String(payload.id ?? "");
 
-    if (status.toUpperCase() === 'PAID' && companyId && tier && billingCycle) {
+    if (status.toUpperCase() === "PAID" && companyId && tier && billingCycle) {
       await prisma.payment.updateMany({
         where: {
           companyId,
-          provider: 'xendit',
+          provider: "xendit",
           providerPaymentId: invoiceId,
         },
-        data: { status: 'paid' },
+        data: { status: "paid" },
       });
 
       await this.activateSubscription({
         companyId,
         tier,
         billingCycle,
-        provider: 'xendit',
+        provider: "xendit",
         providerPaymentId: invoiceId,
         amount: Number(payload.amount ?? 0),
-        currency: String(payload.currency ?? 'idr').toLowerCase(),
+        currency: String(payload.currency ?? "idr").toLowerCase(),
         metadata: payload,
       });
     }

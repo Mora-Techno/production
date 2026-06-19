@@ -1,31 +1,44 @@
-'use client';
+import { PickLogin } from "@repo/types";
+import { DecoratedInput } from "@/components/wrapper";
+import { EyeClosed, Eye } from "lucide-react";
+import { ActionButton } from "@/components/wrapper";
 
-import { useState } from 'react';
-
-import { Button } from '@/components/atoms';
-import { useLogin } from '@/hooks/auth';
-
-export function LoginFormSection() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const login = useLogin();
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    login.mutate({ email: email.trim(), password });
+interface LoginFormSectionProps {
+  state: {
+    formLogin: PickLogin;
+    setFormLogin: React.Dispatch<React.SetStateAction<PickLogin>>;
+    showPassword: boolean;
+    setShowPassword: React.Dispatch<React.SetStateAction<boolean>>;
   };
 
+  service: {
+    handleSubmit: (e: React.FormEvent) => void;
+    isPending: boolean;
+  };
+}
+
+const LoginFormSection: React.FC<LoginFormSectionProps> = ({
+  state,
+  service,
+}) => {
+  const { formLogin, setFormLogin, setShowPassword, showPassword } = state;
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={service.handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <label htmlFor="email" className="text-sm font-medium">
           Email
         </label>
-        <input
+        <DecoratedInput
           id="email"
           type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={formLogin.email}
+          onChange={(e) =>
+            setFormLogin((prev) => ({
+              ...prev,
+              email: e.target.value,
+            }))
+          }
           required
           placeholder="nama@email.com"
           className="w-full rounded-xl border border-input bg-background/80 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring"
@@ -35,19 +48,43 @@ export function LoginFormSection() {
         <label htmlFor="password" className="text-sm font-medium">
           Password
         </label>
-        <input
+        <DecoratedInput
           id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          type={showPassword ? "text" : "password"}
+          value={formLogin.password}
+          iconRight={
+            showPassword ? (
+              <EyeClosed
+                onClick={() => setShowPassword(false)}
+                className="text-foreground  cursor-pointer relative"
+              />
+            ) : (
+              <Eye
+                onClick={() => setShowPassword(true)}
+                className="text-foreground cursor-pointer relative"
+              />
+            )
+          }
+          onChange={(e) =>
+            setFormLogin((prev) => ({
+              ...prev,
+              password: e.target.value,
+            }))
+          }
           required
           placeholder="••••••••"
           className="w-full rounded-xl border border-input bg-background/80 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring"
         />
       </div>
-      <Button type="submit" className="ghibli-btn w-full" disabled={login.isPending}>
-        {login.isPending ? 'Memproses...' : 'Masuk'}
-      </Button>
+      <ActionButton
+        type="submit"
+        className=" w-full"
+        disabled={service.isPending}
+      >
+        {service.isPending ? "Memproses..." : "Masuk"}
+      </ActionButton>
     </form>
   );
-}
+};
+
+export default LoginFormSection;

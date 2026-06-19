@@ -1,4 +1,4 @@
-type ToastType = 'success' | 'error' | 'warning' | 'info' | 'question';
+type ToastType = "success" | "error" | "warning" | "info" | "question";
 export interface ModalProps {
   title: string;
   icon: ToastType;
@@ -20,4 +20,14 @@ export interface AlertContexType {
   toast: (p: ToastProps) => void;
   modal: (p: ModalProps) => void;
   confirm: (p: ModalProps) => Promise<boolean>;
+}
+
+export interface IconPropsType {
+  onClick?: () => void;
+  className?: string;
+}
+export interface RegisterProps {
+  title: string;
+  icon: any;
+  href: string;
 }

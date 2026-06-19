@@ -1,7 +1,6 @@
 import { Icon } from "@iconify/react";
 import { Leaf } from "lucide-react";
 import Link from "next/link";
-
 import { appConfig } from "@/configs/app.config";
 
 export default function AppFooter() {
@@ -10,7 +9,7 @@ export default function AppFooter() {
       <div className="mx-auto flex max-w-5xl flex-col gap-8 md:flex-row md:items-start md:justify-between">
         <div>
           <Link href="/home" className="flex items-center gap-2">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500/20 to-amber-500/10">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-linear-to-br from-orange-500/20 to-amber-500/10">
               <Leaf className="size-5 text-orange-400" />
             </div>
             <span className="font-serif text-lg font-semibold text-white">

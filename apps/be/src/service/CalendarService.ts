@@ -1,5 +1,9 @@
-import prisma from 'prisma/client';
-import type { CreateEventBody, EventQuery, UpdateEventBody } from '@/types/calendar.types';
+import prisma from "prisma/client";
+import type {
+  PickCreateEvent,
+  EventQuery,
+  PickUpdateEvent,
+} from "@repo/types/productivity.types";
 
 class CalendarService {
   public async list(query: EventQuery) {
@@ -15,11 +19,11 @@ class CalendarService {
 
     return prisma.calendarEvent.findMany({
       where,
-      orderBy: { startDate: 'asc' },
+      orderBy: { startDate: "asc" },
     });
   }
 
-  public async create(input: CreateEventBody) {
+  public async create(input: PickCreateEvent) {
     return prisma.calendarEvent.create({
       data: {
         title: input.title,
@@ -30,7 +34,7 @@ class CalendarService {
     });
   }
 
-  public async update(id: string, input: UpdateEventBody) {
+  public async update(id: string, input: PickUpdateEvent) {
     const existing = await prisma.calendarEvent.findUnique({ where: { id } });
     if (!existing) return null;
 
