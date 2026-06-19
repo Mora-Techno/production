@@ -1,54 +1,56 @@
-import Elysia from 'elysia';
-import jwt from 'jsonwebtoken';
-import type { JwtPayload } from '@/types/auth.types';
+import jwt from "jsonwebtoken";
+import { JwtPayload } from "@repo/types/auth.types";
+import { env } from "@/config/env.config";
 
-export const verifyToken = () =>
-  new Elysia({ name: 'verify-token' }).derive({ as: 'scoped' }, ({ headers, set }) => {
+export const verifyToken = () => ({
+  beforeHandle: async (c: any) => {
     try {
-      const authHeader = headers.authorization;
-      const token = authHeader?.split(' ')[1];
+      const authHeader = c.request.headers.get("authorization");
+      const token = authHeader?.split(" ")[1];
 
       if (!token) {
-        set.status = 401;
-        throw new Error('Access denied. No token provided.');
+        return c.json(
+          { status: 401, message: "Akses ditolak. Token belum diberikan." },
+          401,
+        );
       }
 
-      if (!process.env.JWT_SECRET) {
-        console.error('JWT_SECRET is not defined in environment variables');
-        set.status = 500;
-        throw new Error('Server configuration error.');
+      if (!env.JWT_SECRET) {
+        console.error("JWT_SECRET is not defined in environment variables");
+        return c.json(
+          { status: 500, message: "Kesalahan konfigurasi server." },
+          500,
+        );
       }
 
-      const user = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
-
-      return { user };
-    } catch (error: unknown) {
-      if (error instanceof jwt.TokenExpiredError) {
-        set.status = 401;
-        throw new Error('Token has expired.');
+      const decoded = jwt.verify(token, env.JWT_SECRET) as JwtPayload;
+      if (decoded.tokenType && decoded.tokenType !== "access") {
+        return c.json({ status: 403, message: "Tipe token tidak valid." }, 403);
       }
-
-      if (error instanceof jwt.JsonWebTokenError) {
-        set.status = 403;
-        throw new Error('Invalid token.');
+      c.user = decoded;
+    } catch (error: any) {
+      if (error.name === "TokenExpiredError") {
+        return c.json(
+          { status: 401, message: "Token telah kedaluwarsa." },
+          401,
+        );
+      } else if (error.name === "JsonWebTokenError") {
+        return c.json({ status: 403, message: "Token tidak valid." }, 403);
+      } else {
+        console.error("JWT verification error:", error);
+        return c.json({ status: 500, message: "Verifikasi token gagal." }, 500);
       }
-
-      if (error instanceof Error) {
-        throw error;
-      }
-
-      console.error('JWT verification error:', error);
-      set.status = 500;
-      throw new Error('Token verification failed.');
     }
-  });
+  },
+});
 
-export const requireCompanyRole = (roles: string[]) =>
-  new Elysia({ name: 'require-company-role' }).onBeforeHandle((context: any) => {
-    const { user, set } = context;
-
-    if (!user || !roles.includes(user.companyRole)) {
-      set.status = 403;
-      return 'Akses ditolak. Role tidak sesuai.';
+export const requireRole = (roles: string[]) => ({
+  beforeHandle: (c: any) => {
+    if (!c.user || !roles.includes(c.user.role)) {
+      return c.json(
+        { status: 403, message: "Akses ditolak. Role tidak sesuai." },
+        403,
+      );
     }
-  });
+  },
+});

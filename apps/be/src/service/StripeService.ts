@@ -1,12 +1,12 @@
-import Stripe from 'stripe';
-import type { BillingCycle, SubscriptionTier } from '@/types/company.types';
-import { getPlan, getPlanPrice } from '@/config/subscriptionPlans';
+import Stripe from "stripe";
+import type { BillingCycle, SubscriptionTier } from "@repo/types/company.types";
+import { getPlan, getPlanPrice } from "@/config/subscriptionPlans";
 
 class StripeService {
   private getClient(): Stripe {
     const secretKey = process.env.STRIPE_SECRET_KEY;
     if (!secretKey) {
-      throw new Error('STRIPE_SECRET_KEY belum dikonfigurasi');
+      throw new Error("STRIPE_SECRET_KEY belum dikonfigurasi");
     }
 
     return new Stripe(secretKey);
@@ -26,12 +26,16 @@ class StripeService {
   }) {
     const stripe = this.getClient();
     const plan = getPlan(input.tier);
-    const { amount, currency } = getPlanPrice(input.tier, input.billingCycle, 'stripe');
+    const { amount, currency } = getPlanPrice(
+      input.tier,
+      input.billingCycle,
+      "stripe",
+    );
 
-    const interval = input.billingCycle === 'yearly' ? 'year' : 'month';
+    const interval = input.billingCycle === "yearly" ? "year" : "month";
 
     const session = await stripe.checkout.sessions.create({
-      mode: 'subscription',
+      mode: "subscription",
       customer_email: input.email,
       line_items: [
         {
@@ -53,7 +57,7 @@ class StripeService {
         companyId: input.companyId,
         tier: input.tier,
         billingCycle: input.billingCycle,
-        provider: 'stripe',
+        provider: "stripe",
       },
       subscription_data: {
         metadata: {
@@ -75,11 +79,11 @@ class StripeService {
   public constructWebhookEvent(payload: string, signature: string | null) {
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
     if (!webhookSecret) {
-      throw new Error('STRIPE_WEBHOOK_SECRET belum dikonfigurasi');
+      throw new Error("STRIPE_WEBHOOK_SECRET belum dikonfigurasi");
     }
 
     if (!signature) {
-      throw new Error('Stripe signature header tidak ditemukan');
+      throw new Error("Stripe signature header tidak ditemukan");
     }
 
     const stripe = this.getClient();

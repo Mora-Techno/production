@@ -1,118 +1,130 @@
-import SubscriptionService from '@/service/SubscriptionService';
-import { errorResponse, successResponse } from '@/http/response';
-import type { JwtPayload } from '@/types/auth.types';
-import type { CreateCheckoutBody } from '@/types/subscription.types';
+import SubscriptionService from "@/service/SubscriptionService";
+import { HttpResponse } from "@/http";
+import type { JwtPayload } from "@repo/types/auth.types";
+import type { PickCreateCheckout } from "@repo/types/subscription.types";
+import type { AppContext } from "@/contex";
 
-function getUser(c: any): JwtPayload {
+function getUser(c: AppContext): JwtPayload {
   return c.user as JwtPayload;
 }
 
 class SubscriptionController {
-  public async listPlans(c: any) {
+  public async listPlans(c: AppContext) {
     try {
       const data = SubscriptionService.listPlans();
-      return c.json(successResponse('Berhasil mengambil daftar paket', data));
+      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil daftar paket");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal mengambil daftar paket', 500), 500);
+      return HttpResponse(c).internalError(error, "Gagal mengambil daftar paket");
     }
   }
 
-  public async getMine(c: any) {
+  public async getMine(c: AppContext) {
     try {
       const user = getUser(c);
 
       if (!user.companyId) {
-        return c.json(errorResponse('Company tidak ditemukan', 404), 404);
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
       const data = await SubscriptionService.getDetail(user.companyId);
       if (!data) {
-        return c.json(errorResponse('Company tidak ditemukan', 404), 404);
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
-      return c.json(successResponse('Berhasil mengambil langganan', data));
+      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil langganan");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal mengambil langganan', 500), 500);
+      return HttpResponse(c).internalError(error, "Gagal mengambil langganan");
     }
   }
 
-  public async checkout(c: any) {
+  public async checkout(c: AppContext) {
     try {
       const user = getUser(c);
 
-      if (user.companyRole !== 'leader') {
-        return c.json(errorResponse('Hanya leader yang dapat mengelola langganan', 403), 403);
+      if (user.companyRole !== "leader") {
+        return HttpResponse(c).forbidden(
+          "Hanya leader yang dapat mengelola langganan",
+        );
       }
 
       if (!user.companyId) {
-        return c.json(errorResponse('Company tidak ditemukan', 404), 404);
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
-      const body = c.body as CreateCheckoutBody;
+      const body = c.body as PickCreateCheckout;
       const data = await SubscriptionService.createCheckout(
         user.companyId,
         { email: user.email, fullName: user.fullName },
         body,
       );
 
-      return c.json(successResponse('Checkout berhasil dibuat', data));
+      return HttpResponse(c).ok(data, undefined, "Checkout berhasil dibuat");
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : 'Gagal membuat checkout';
-      return c.json(errorResponse(message, 400), 400);
+      const message =
+        error instanceof Error ? error.message : "Gagal membuat checkout";
+      return HttpResponse(c).badRequest(message);
     }
   }
 
-  public async cancel(c: any) {
+  public async cancel(c: AppContext) {
     try {
       const user = getUser(c);
 
-      if (user.companyRole !== 'leader') {
-        return c.json(errorResponse('Hanya leader yang dapat membatalkan langganan', 403), 403);
+      if (user.companyRole !== "leader") {
+        return HttpResponse(c).forbidden(
+          "Hanya leader yang dapat membatalkan langganan",
+        );
       }
 
       if (!user.companyId) {
-        return c.json(errorResponse('Company tidak ditemukan', 404), 404);
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
       const data = await SubscriptionService.cancelSubscription(user.companyId);
-      return c.json(successResponse('Langganan berhasil dibatalkan', data));
+      return HttpResponse(c).ok(data, undefined, "Langganan berhasil dibatalkan");
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : 'Gagal membatalkan langganan';
-      return c.json(errorResponse(message, 400), 400);
+      const message =
+        error instanceof Error ? error.message : "Gagal membatalkan langganan";
+      return HttpResponse(c).badRequest(message);
     }
   }
 
-  public async stripeWebhook(c: any) {
+  public async stripeWebhook(c: AppContext) {
     try {
       const payload = await c.request.text();
-      const signature = c.request.headers.get('stripe-signature');
-      const data = await SubscriptionService.handleStripeWebhook(payload, signature);
+      const signature = c.request.headers.get("stripe-signature");
+      const data = await SubscriptionService.handleStripeWebhook(
+        payload,
+        signature,
+      );
 
-      return c.json(successResponse('Webhook Stripe diterima', data));
+      return HttpResponse(c).ok(data, undefined, "Webhook Stripe diterima");
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : 'Webhook Stripe gagal';
-      return c.json(errorResponse(message, 400), 400);
+      const message =
+        error instanceof Error ? error.message : "Webhook Stripe gagal";
+      return HttpResponse(c).badRequest(message);
     }
   }
 
-  public async xenditWebhook(c: any) {
+  public async xenditWebhook(c: AppContext) {
     try {
-      const callbackToken = c.request.headers.get('x-callback-token');
+      const callbackToken = c.request.headers.get("x-callback-token");
       const data = await SubscriptionService.handleXenditWebhook(
         c.body as Record<string, unknown>,
         callbackToken,
       );
 
-      return c.json(successResponse('Webhook Xendit diterima', data));
+      return HttpResponse(c).ok(data, undefined, "Webhook Xendit diterima");
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : 'Webhook Xendit gagal';
-      return c.json(errorResponse(message, 400), 400);
+      const message =
+        error instanceof Error ? error.message : "Webhook Xendit gagal";
+      return HttpResponse(c).badRequest(message);
     }
   }
 }

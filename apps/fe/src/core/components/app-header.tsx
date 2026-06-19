@@ -1,9 +1,6 @@
-"use client";
-
 import { Leaf } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-
+import { useEffect } from "react";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -11,14 +8,20 @@ import {
 } from "@/components/atoms/navigation-menu";
 import { navigationMenuConfig } from "@/configs/app.config";
 import { cn } from "@/utils/classname";
-
 // import UserDropdown from './user.dropdown';
 import LanguageDropdown from "./language.dropdown";
 import NotificationDropdown from "./notification.dropdown";
 import ThemeToggle from "./theme-toggle";
+interface AppHeaderProps {
+  state: {
+    isScrolled: boolean;
+    setIsScrolled: React.Dispatch<React.SetStateAction<boolean>>;
+    pathname: string;
+  };
+}
 
-export default function AppHeader() {
-  const [isScrolled, setIsScrolled] = useState(false);
+export default function AppHeader({ state }: AppHeaderProps) {
+  const { isScrolled, pathname, setIsScrolled } = state;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,6 +35,8 @@ export default function AppHeader() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const style = `group inline-flex h-9 w-max items-center justify-center rounded-md  px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:hover:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:focus:bg-accent data-[state=open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 `;
 
   return (
     <nav
@@ -60,7 +65,7 @@ export default function AppHeader() {
               <NavigationMenuItem key={item.title}>
                 <Link
                   href={item.href}
-                  className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:hover:bg-accent data-[state=open]:text-accent-foreground data-[state=open]:focus:bg-accent data-[state=open]:bg-accent/50 focus-visible:ring-ring/50 outline-none transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1"
+                  className={`${style} ${pathname === item.href ? "bg-accent" : "bg-background"}`}
                 >
                   {item.title}
                 </Link>

@@ -1,126 +1,154 @@
-export type TodoStatus = 'pending' | 'completed';
+export type TodoStatus = "pending" | "completed";
 
-export interface Todo {
+export interface ITodo {
   id: string;
   text: string;
   status: TodoStatus;
+  dueDate: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type Todo = Pick<ITodo, "id" | "text" | "status"> & {
   dueDate: string | null;
   createdAt: string;
   updatedAt: string;
-}
+};
 
 export interface TodoQuery {
   status?: TodoStatus;
-  date?: 'today';
+  date?: "today";
 }
 
-export type PickCreateTodo = {
-  text: string;
+export type PickCreateTodo = Pick<ITodo, "text"> & {
   dueDate?: string;
 };
 
-export type PickUpdateTodo = {
-  text?: string;
-  status?: TodoStatus;
+export type PickUpdateTodo = Partial<Pick<ITodo, "text" | "status">> & {
   dueDate?: string | null;
 };
 
-export interface Note {
+export type TodoParams = Pick<ITodo, "id">;
+
+export interface INote {
   id: string;
   title: string;
   content: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export type PickCreateNote = {
-  title: string;
-  content: string;
+export type Note = Pick<INote, "id" | "title" | "content"> & {
+  createdAt: string;
+  updatedAt: string;
 };
 
-export type PickUpdateNote = {
-  title: string;
-  content: string;
-};
+export type PickCreateNote = Pick<INote, "title" | "content">;
+export type PickUpdateNote = Pick<INote, "title" | "content">;
+export type NoteParams = Pick<INote, "id">;
 
-export interface CalendarEvent {
+export interface ICalendarEvent {
   id: string;
   title: string;
   description: string | null;
+  startDate: Date;
+  endDate: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type CalendarEvent = Pick<
+  ICalendarEvent,
+  "id" | "title" | "description"
+> & {
   startDate: string;
   endDate: string | null;
   createdAt: string;
   updatedAt: string;
-}
+};
 
 export interface EventQuery {
   month?: string;
   year?: string;
 }
 
-export type PickCreateEvent = {
-  title: string;
-  description?: string;
+export type PickCreateEvent = Pick<ICalendarEvent, "title" | "description"> & {
   startDate: string;
   endDate?: string;
 };
 
-export type PickUpdateEvent = {
-  title?: string;
-  description?: string | null;
+export type PickUpdateEvent = Partial<
+  Pick<ICalendarEvent, "title" | "description" | "startDate" | "endDate">
+> & {
   startDate?: string;
   endDate?: string | null;
 };
 
-export interface MusicPlaylist {
+export type EventParams = Pick<ICalendarEvent, "id">;
+
+export interface IMusicPlaylist {
   id: string;
   title: string;
   url: string;
-  createdAt: string;
+  createdAt: Date;
 }
 
-export type PickCreatePlaylist = {
-  title: string;
-  url: string;
+export type MusicPlaylist = Pick<IMusicPlaylist, "id" | "title" | "url"> & {
+  createdAt: string;
 };
 
-export type NotificationStatus = 'success' | 'failed';
+export type PickCreatePlaylist = Pick<IMusicPlaylist, "title" | "url">;
+export type PlaylistParams = Pick<IMusicPlaylist, "id">;
 
-export interface NotificationLog {
+export type NotificationStatus = "success" | "failed";
+
+export interface INotificationLog {
   id: string;
   recipient: string;
   subject: string;
   body: string;
   status: NotificationStatus;
   error: string | null;
-  createdAt: string;
+  createdAt: Date;
 }
+
+export type NotificationLog = Pick<
+  INotificationLog,
+  "id" | "recipient" | "subject" | "body" | "status" | "error"
+> & {
+  createdAt: string;
+};
 
 export interface NotificationLogQuery {
   status?: NotificationStatus;
   limit?: number;
 }
 
-export type PickSendNotification = {
-  recipient: string;
-  subject: string;
-  body: string;
-};
+export type PickSendNotification = Pick<
+  INotificationLog,
+  "recipient" | "subject" | "body"
+>;
 
-export type TimeFormat = '24h' | '12h';
-export type ThemePreference = 'light' | 'dark' | 'system';
+export type TimeFormat = "24h" | "12h";
+export type ThemePreference = "light" | "dark" | "system";
 
-export interface Settings {
+export interface ISettings {
   id: string;
   timeFormat: TimeFormat;
   defaultNotifications: boolean;
   theme: ThemePreference;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export type PickUpdateSettings = {
-  timeFormat?: TimeFormat;
-  defaultNotifications?: boolean;
-  theme?: ThemePreference;
+export type Settings = Pick<
+  ISettings,
+  "id" | "timeFormat" | "defaultNotifications" | "theme"
+> & {
+  createdAt: string;
+  updatedAt: string;
 };
+
+export type PickUpdateSettings = Partial<
+  Pick<ISettings, "timeFormat" | "defaultNotifications" | "theme">
+>;

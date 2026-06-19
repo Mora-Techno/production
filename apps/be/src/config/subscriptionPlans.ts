@@ -1,4 +1,4 @@
-import type { BillingCycle, SubscriptionTier } from '@/types/company.types';
+import type { BillingCycle, SubscriptionTier } from "@repo/types/company.types";
 
 export type PaymentProvider = 'stripe' | 'xendit';
 

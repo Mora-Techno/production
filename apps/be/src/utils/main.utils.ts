@@ -1,5 +1,5 @@
-import nodemailer, { type Transporter } from 'nodemailer';
-import { env } from '@/config/env.config';
+import nodemailer, { type Transporter } from "nodemailer";
+import { env } from "@/config/env.config";
 
 type SendMailInput = {
   to: string;
@@ -13,12 +13,12 @@ let cachedTransport: Transporter | null = null;
 function normalizeSmtpPassword(password: string) {
   return password
     .trim()
-    .replace(/^["']|["']$/g, '')
-    .replace(/\s/g, '');
+    .replace(/^["']|["']$/g, "")
+    .replace(/\s/g, "");
 }
 
 function isGmailHost(host: string) {
-  return host.toLowerCase().includes('gmail.com');
+  return host.toLowerCase().includes("gmail.com");
 }
 
 export function createMailTransport() {
@@ -28,25 +28,25 @@ export function createMailTransport() {
   if (isGmailHost(env.SMTP_HOST)) {
     if (env.SMTP_PORT === 465) {
       return nodemailer.createTransport({
-        host: 'smtp.gmail.com',
+        host: "smtp.gmail.com",
         port: 465,
         secure: true,
         auth: { user, pass },
         tls: {
-          minVersion: 'TLSv1.2',
+          minVersion: "TLSv1.2",
           rejectUnauthorized: true,
         },
       });
     }
 
     return nodemailer.createTransport({
-      host: 'smtp.gmail.com',
+      host: "smtp.gmail.com",
       port: 587,
       secure: false,
       requireTLS: true,
       auth: { user, pass },
       tls: {
-        minVersion: 'TLSv1.2',
+        minVersion: "TLSv1.2",
         rejectUnauthorized: true,
       },
     });
@@ -72,7 +72,7 @@ export function resetMailTransport() {
   cachedTransport = null;
 }
 
-export function getMailFromAddress(label = 'Etno Learning') {
+export function getMailFromAddress(label = "Etno Learning") {
   return `"${label}" <${env.SMTP_USER.trim()}>`;
 }
 
@@ -83,20 +83,20 @@ export async function verifyMailTransport() {
 
 function formatMailError(error: unknown) {
   if (!(error instanceof Error)) {
-    return 'Gagal mengirim email';
+    return "Gagal mengirim email";
   }
 
   const smtpError = error as Error & { code?: string; responseCode?: number };
 
-  if (smtpError.code === 'EAUTH' || smtpError.responseCode === 535) {
-    return 'Autentikasi SMTP gagal. Pastikan SMTP_USER dan App Password Gmail benar.';
+  if (smtpError.code === "EAUTH" || smtpError.responseCode === 535) {
+    return "Autentikasi SMTP gagal. Pastikan SMTP_USER dan App Password Gmail benar.";
   }
 
-  if (smtpError.code === 'ESOCKET' || smtpError.code === 'ECONNECTION') {
-    return 'Koneksi SMTP gagal. Periksa SMTP_HOST, SMTP_PORT, dan SMTP_SECURE.';
+  if (smtpError.code === "ESOCKET" || smtpError.code === "ECONNECTION") {
+    return "Koneksi SMTP gagal. Periksa SMTP_HOST, SMTP_PORT, dan SMTP_SECURE.";
   }
 
-  return smtpError.message || 'Gagal mengirim email';
+  return smtpError.message || "Gagal mengirim email";
 }
 
 export async function sendMailMessage(input: SendMailInput) {

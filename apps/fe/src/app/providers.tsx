@@ -15,12 +15,18 @@ import { LenisProvider } from "@/core/providers/lenis.provinder";
 import { ThemeProvider } from "@/core/providers/theme.provider";
 import { AlertProvinder } from "@/hooks/useAlert/costum-alert";
 import { persistor, store } from "@/stores/store";
-
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { composeProviders } from "./composeProvinders";
+import { env } from "@/configs";
 
 const Providers = composeProviders([
   ({ children }) => (
     <SidebarProvider defaultOpen={false}>{children}</SidebarProvider>
+  ),
+  ({ children }) => (
+    <GoogleOAuthProvider clientId={env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
+      {children}
+    </GoogleOAuthProvider>
   ),
   ({ children }) => <Provider store={store}>{children}</Provider>,
   ({ children }) => <PersistGate persistor={persistor}>{children}</PersistGate>,

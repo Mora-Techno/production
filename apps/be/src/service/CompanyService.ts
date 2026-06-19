@@ -1,36 +1,14 @@
-import bcryptjs from 'bcryptjs';
-import type { CompanyRole } from '@prisma/client';
-import prisma from 'prisma/client';
-import { getWorkstationUserLimit } from '@/utils/tierLimits';
-import { getPeriodEnd } from '@/config/subscriptionPlans';
+import bcryptjs from "bcryptjs";
+import type { CompanyRole } from "@prisma/client";
+import prisma from "prisma/client";
+import { getWorkstationUserLimit } from "@/utils/tierLimits";
+import { getPeriodEnd } from "@/config/subscriptionPlans";
 import type {
-  CreateAdminBody,
-  RegisterCompanyBody,
-  SafeUser,
-  UpdateSubscriptionBody,
-} from '@/types/company.types';
-
-function sanitizeUser(user: {
-  id: string;
-  email: string;
-  fullName: string;
-  companyRole: CompanyRole;
-  companyId: string | null;
-  password?: string;
-  token?: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-}): SafeUser {
-  return {
-    id: user.id,
-    email: user.email,
-    fullName: user.fullName,
-    companyRole: user.companyRole,
-    companyId: user.companyId,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
-  };
-}
+  PickCreateAdmin,
+  PickRegisterCompany,
+  PickUpdateCompanySubscription,
+} from "@repo/types/company.types";
+import { sanitizeUser } from "@/utils/authTokens";
 
 function addMonths(date: Date, months: number): Date {
   const result = new Date(date);
@@ -39,17 +17,17 @@ function addMonths(date: Date, months: number): Date {
 }
 
 class CompanyService {
-  public async registerLeader(input: RegisterCompanyBody) {
+  public async registerLeader(input: PickRegisterCompany) {
     const existing = await prisma.user.findUnique({
       where: { email: input.email },
     });
 
     if (existing) {
-      throw new Error('Email sudah terdaftar');
+      throw new Error("Email sudah terdaftar");
     }
 
     const hashedPassword = await bcryptjs.hash(input.password, 10);
-    const tier = input.tier ?? 'free';
+    const tier = input.tier ?? "free";
     const now = new Date();
 
     const result = await prisma.$transaction(async (tx) => {
@@ -58,7 +36,7 @@ class CompanyService {
           email: input.email,
           fullName: input.fullName,
           password: hashedPassword,
-          companyRole: 'leader',
+          companyRole: "leader",
         },
       });
 
@@ -66,7 +44,7 @@ class CompanyService {
         data: {
           name: input.companyName,
           tier,
-          billingCycle: 'monthly',
+          billingCycle: "monthly",
           subscriptionStartsAt: now,
           subscriptionEndsAt: addMonths(now, 1),
           leaderId: leader.id,
@@ -90,13 +68,13 @@ class CompanyService {
     };
   }
 
-  public async createAdmin(companyId: string, input: CreateAdminBody) {
+  public async createAdmin(companyId: string, input: PickCreateAdmin) {
     const existing = await prisma.user.findUnique({
       where: { email: input.email },
     });
 
     if (existing) {
-      throw new Error('Email sudah terdaftar');
+      throw new Error("Email sudah terdaftar");
     }
 
     const company = await prisma.company.findUnique({
@@ -104,7 +82,7 @@ class CompanyService {
     });
 
     if (!company) {
-      throw new Error('Company tidak ditemukan');
+      throw new Error("Company tidak ditemukan");
     }
 
     const hashedPassword = await bcryptjs.hash(input.password, 10);
@@ -114,7 +92,7 @@ class CompanyService {
         email: input.email,
         fullName: input.fullName,
         password: hashedPassword,
-        companyRole: 'admin',
+        companyRole: "admin",
         companyId,
       },
     });
@@ -124,7 +102,7 @@ class CompanyService {
 
   public async listAdmins(companyId: string) {
     return prisma.user.findMany({
-      where: { companyId, companyRole: 'admin' },
+      where: { companyId, companyRole: "admin" },
       select: {
         id: true,
         email: true,
@@ -134,7 +112,7 @@ class CompanyService {
         createdAt: true,
         updatedAt: true,
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
     });
   }
 
@@ -162,7 +140,10 @@ class CompanyService {
     };
   }
 
-  public async updateSubscription(companyId: string, input: UpdateSubscriptionBody) {
+  public async updateSubscription(
+    companyId: string,
+    input: PickUpdateCompanySubscription,
+  ) {
     const company = await prisma.company.findUnique({
       where: { id: companyId },
     });
@@ -170,7 +151,7 @@ class CompanyService {
     if (!company) return null;
 
     const now = new Date();
-    const billingCycle = input.billingCycle ?? 'monthly';
+    const billingCycle = input.billingCycle ?? "monthly";
 
     return prisma.company.update({
       where: { id: companyId },

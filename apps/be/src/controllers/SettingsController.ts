@@ -1,24 +1,26 @@
-import SettingsService from '@/service/SettingsService';
-import { errorResponse, successResponse } from '@/http/response';
+import SettingsService from "@/service/SettingsService";
+import { HttpResponse } from "@/http";
+import type { AppContext } from "@/contex";
+import type { PickUpdateSettings } from "@repo/types/productivity.types";
 
 class SettingsController {
-  public async get(c: any) {
+  public async get(c: AppContext) {
     try {
       const data = await SettingsService.get();
-      return c.json(successResponse('Berhasil mengambil pengaturan', data));
+      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil pengaturan");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal mengambil pengaturan', 500), 500);
+      return HttpResponse(c).internalError(error, "Gagal mengambil pengaturan");
     }
   }
 
-  public async update(c: any) {
+  public async update(c: AppContext) {
     try {
-      const data = await SettingsService.update(c.body);
-      return c.json(successResponse('Pengaturan berhasil diperbarui', data));
+      const data = await SettingsService.update(c.body as PickUpdateSettings);
+      return HttpResponse(c).ok(data, undefined, "Pengaturan berhasil diperbarui");
     } catch (error) {
       console.error(error);
-      return c.json(errorResponse('Gagal memperbarui pengaturan', 500), 500);
+      return HttpResponse(c).internalError(error, "Gagal memperbarui pengaturan");
     }
   }
 }

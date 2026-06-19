@@ -1,5 +1,8 @@
-import prisma from 'prisma/client';
-import type { CreateNoteBody, UpdateNoteBody } from '@/types/note.types';
+import prisma from "prisma/client";
+import type {
+  PickCreateNote,
+  PickUpdateNote,
+} from "@repo/types/productivity.types";
 
 class NoteService {
   public async list() {
@@ -11,7 +14,7 @@ class NoteService {
         createdAt: true,
         updatedAt: true,
       },
-      orderBy: { updatedAt: 'desc' },
+      orderBy: { updatedAt: "desc" },
     });
   }
 
@@ -19,11 +22,11 @@ class NoteService {
     return prisma.note.findUnique({ where: { id } });
   }
 
-  public async create(input: CreateNoteBody) {
+  public async create(input: PickCreateNote) {
     return prisma.note.create({ data: input });
   }
 
-  public async update(id: string, input: UpdateNoteBody) {
+  public async update(id: string, input: PickUpdateNote) {
     const existing = await prisma.note.findUnique({ where: { id } });
     if (!existing) return null;
 
