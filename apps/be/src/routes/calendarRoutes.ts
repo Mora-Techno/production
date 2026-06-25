@@ -7,6 +7,7 @@ import {
   UpdateEventDto,
 } from "@/dto/calendar.dto";
 import { AppContext } from "@/contex";
+import { verifyToken } from "@/middlewares/auth";
 
 class CalendarRouter {
   public calendarRouter;
@@ -25,6 +26,7 @@ class CalendarRouter {
       (c: AppContext) => CalendarController.list(c),
       {
         query: EventQueryDto,
+        beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Daftar jadwal kalender",
           description:
@@ -38,6 +40,7 @@ class CalendarRouter {
       (c: AppContext) => CalendarController.create(c),
       {
         body: CreateEventDto,
+        beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Tambah jadwal baru",
           description: "Menambahkan jadwal atau event baru ke dalam kalender.",
@@ -51,6 +54,7 @@ class CalendarRouter {
       {
         params: EventParamsDto,
         body: UpdateEventDto,
+        beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Perbarui jadwal",
           description:
@@ -64,6 +68,7 @@ class CalendarRouter {
       (c: AppContext) => CalendarController.remove(c),
       {
         params: EventParamsDto,
+        beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Hapus jadwal",
           description: "Membatalkan dan menghapus jadwal dari kalender.",

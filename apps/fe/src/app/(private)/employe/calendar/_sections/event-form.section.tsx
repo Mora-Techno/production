@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { format } from 'date-fns';
-import { useState } from 'react';
+import { format } from "date-fns";
+import { useState } from "react";
 
-import { Button } from '@/components/atoms';
-import { GhibliCard } from '@/components/molecules/ghibli-card';
-import { useCreateEvent } from '@/hooks/calendar';
-import type { EventQuery } from '@/types/api/productivity';
+import { Button } from "@/components/atoms";
+import { GhibliCard } from "@/components/molecules/ghibli-card";
+import { useCreateEvent } from "@/hooks/calendar";
+import type { EventQuery } from "@/types/api/productivity";
 
 export function EventFormSection({
   selectedDate,
@@ -15,9 +15,9 @@ export function EventFormSection({
   selectedDate?: Date;
   query?: EventQuery;
 }) {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [startDate, setStartDate] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [startDate, setStartDate] = useState("");
   const createEvent = useCreateEvent(query);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -32,9 +32,9 @@ export function EventFormSection({
       },
       {
         onSuccess: () => {
-          setTitle('');
-          setDescription('');
-          setStartDate('');
+          setTitle("");
+          setDescription("");
+          setStartDate("");
         },
       },
     );
@@ -45,7 +45,7 @@ export function EventFormSection({
       <h2 className="font-serif text-lg font-semibold">Tambah Jadwal</h2>
       {selectedDate && (
         <p className="text-sm text-muted-foreground">
-          Tanggal: {format(selectedDate, 'd MMMM yyyy')}
+          Tanggal: {format(selectedDate, "d MMMM yyyy")}
         </p>
       )}
       <form onSubmit={handleSubmit} className="space-y-3">
@@ -68,7 +68,11 @@ export function EventFormSection({
           onChange={(e) => setStartDate(e.target.value)}
           className="w-full rounded-xl border border-input bg-background/80 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
         />
-        <Button type="submit" className="ghibli-btn w-full" disabled={createEvent.isPending}>
+        <Button
+          type="submit"
+          className="ghibli-btn w-full"
+          disabled={createEvent.isPending}
+        >
           Simpan Jadwal
         </Button>
       </form>

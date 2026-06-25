@@ -5,33 +5,41 @@ import type {
   NotificationLogQuery,
   PickSendNotification,
 } from "@repo/types/productivity.types";
+import { JwtPayload } from "@repo/types/auth.types";
+import { unauthorizedValidate } from "@/validation/auth.validate";
+import { SendNotifValidation } from "@/validation/notification.validate";
 
 class NotificationController {
   public async send(c: AppContext) {
     try {
-      const data = await NotificationService.send(c.body as PickSendNotification);
-      return HttpResponse(c).ok(data, undefined, "Email berhasil dikirim");
+      const user = c.user as JwtPayload;
+      await unauthorizedValidate(user, c);
+      const input = c.body as PickSendNotification;
+
+      await SendNotifValidation(c, input);
+      const data = await NotificationService.send(input);
+      if (!data) {
+        return HttpResponse(c).badRequest();
+      }
+
+      return HttpResponse(c).ok(data, "Email berhasil dikirim");
     } catch (error) {
-      console.error(error);
-      const message =
-        error instanceof Error ? error.message : "Gagal mengirim email";
-      return HttpResponse(c).internalError(error, message);
+      return HttpResponse(c).internalError(error);
     }
   }
 
   public async listLogs(c: AppContext) {
     try {
+      const user = c.user as JwtPayload;
+
+      await unauthorizedValidate(user, c);
       const data = await NotificationService.listLogs({
         status: c.query.status as NotificationLogQuery["status"],
         limit: c.query.limit ? Number(c.query.limit) : undefined,
       });
-      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil riwayat notifikasi");
+      return HttpResponse(c).ok(data, "Berhasil mengambil riwayat notifikasi");
     } catch (error) {
-      console.error(error);
-      return HttpResponse(c).internalError(
-        error,
-        "Gagal mengambil riwayat notifikasi",
-      );
+      return HttpResponse(c).internalError(error);
     }
   }
 }

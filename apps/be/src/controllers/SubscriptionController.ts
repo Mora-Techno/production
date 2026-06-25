@@ -12,10 +12,14 @@ class SubscriptionController {
   public async listPlans(c: AppContext) {
     try {
       const data = SubscriptionService.listPlans();
-      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil daftar paket");
+      return HttpResponse(c).ok(
+        data,
+        undefined,
+        "Berhasil mengambil daftar paket",
+      );
     } catch (error) {
       console.error(error);
-      return HttpResponse(c).internalError(error, "Gagal mengambil daftar paket");
+      return HttpResponse(c).internalError(error);
     }
   }
 
@@ -32,10 +36,14 @@ class SubscriptionController {
         return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
-      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil langganan");
+      return HttpResponse(c).ok(
+        data,
+        undefined,
+        "Berhasil mengambil langganan",
+      );
     } catch (error) {
       console.error(error);
-      return HttpResponse(c).internalError(error, "Gagal mengambil langganan");
+      return HttpResponse(c).internalError(error);
     }
   }
 
@@ -62,10 +70,7 @@ class SubscriptionController {
 
       return HttpResponse(c).ok(data, undefined, "Checkout berhasil dibuat");
     } catch (error) {
-      console.error(error);
-      const message =
-        error instanceof Error ? error.message : "Gagal membuat checkout";
-      return HttpResponse(c).badRequest(message);
+      return HttpResponse(c).internalError(error);
     }
   }
 
@@ -84,7 +89,11 @@ class SubscriptionController {
       }
 
       const data = await SubscriptionService.cancelSubscription(user.companyId);
-      return HttpResponse(c).ok(data, undefined, "Langganan berhasil dibatalkan");
+      return HttpResponse(c).ok(
+        data,
+        undefined,
+        "Langganan berhasil dibatalkan",
+      );
     } catch (error) {
       console.error(error);
       const message =

@@ -1,7 +1,7 @@
 import swagger from "@elysiajs/swagger";
 
 const swaggerPlugin = swagger({
-  path: "/docs",
+  path: "/api-docs",
   documentation: {
     info: {
       title: "Produtify Workstation API",

@@ -9,7 +9,6 @@ import { APP_SESSION_COOKIE_KEY } from "@/configs/cookies.config";
 import { isAuthRoute, isPublicRoute } from "@/configs/routes.config";
 import { useAppDispatch } from "@/hooks/dispatch/dispatch";
 import { setCurrentUser } from "@/stores/authSlice/authSlice";
-import type { RootState } from "@/stores/store";
 import type { AuthSession } from "@/types/api/auth";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {

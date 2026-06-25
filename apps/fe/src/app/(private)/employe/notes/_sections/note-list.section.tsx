@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { format } from 'date-fns';
-import { Plus, Trash2 } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { format } from "date-fns";
+import { Plus, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-import { Button } from '@/components/atoms';
-import { GhibliCard } from '@/components/molecules/ghibli-card';
-import { GhibliEmptyState } from '@/components/molecules/ghibli-empty-state';
-import { useCreateNote, useDeleteNote, useNotes } from '@/hooks/note';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { useGsapStagger } from '@/hooks/useGsapStagger';
-import { cn } from '@/utils/classname';
+import { Button } from "@/components/atoms";
+import { GhibliCard } from "@/components/molecules/ghibli-card";
+import { GhibliEmptyState } from "@/components/template/ghibli-empty-state";
+import { useCreateNote, useDeleteNote, useNotes } from "@/hooks/note";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useGsapStagger } from "@/hooks/useGsapStagger";
+import { cn } from "@/utils/classname";
 
 export function NoteListSection({
   activeId,
@@ -29,7 +29,7 @@ export function NoteListSection({
 
   const handleCreate = () => {
     createNote.mutate(
-      { title: 'Catatan Baru', content: '' },
+      { title: "Catatan Baru", content: "" },
       {
         onSuccess: (res) => {
           const id = res.data.id;
@@ -72,17 +72,22 @@ export function NoteListSection({
             <GhibliCard
               key={note.id}
               data-stagger-item
-              className={cn('cursor-pointer p-4', activeId === note.id && 'ring-2 ring-primary/50')}
+              className={cn(
+                "cursor-pointer p-4",
+                activeId === note.id && "ring-2 ring-primary/50",
+              )}
               onClick={() => handleClick(note.id)}
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
-                  <h3 className="truncate font-serif font-medium">{note.title}</h3>
+                  <h3 className="truncate font-serif font-medium">
+                    {note.title}
+                  </h3>
                   <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-                    {note.content || 'Kosong...'}
+                    {note.content || "Kosong..."}
                   </p>
                   <p className="mt-2 text-[10px] text-muted-foreground">
-                    {format(new Date(note.updatedAt), 'd MMM yyyy')}
+                    {format(new Date(note.updatedAt), "d MMM yyyy")}
                   </p>
                 </div>
                 <Button

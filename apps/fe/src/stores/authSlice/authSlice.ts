@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import type { AuthSession } from '@/types/api/auth';
+import type { AuthSession } from "@/types/api/auth";
 
 interface AuthState {
   currentUser: AuthSession | null;
@@ -11,7 +11,7 @@ const initialState: AuthState = {
 };
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState,
   reducers: {
     setCurrentUser(state, action: PayloadAction<AuthSession | null>) {

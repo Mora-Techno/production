@@ -1,16 +1,20 @@
 import TodoService from "@/service/TodoService";
 import { HttpResponse } from "@/http";
 import type { AppContext } from "@/contex";
-import type { PickCreateTodo, PickUpdateTodo, TodoQuery } from "@repo/types/productivity.types";
+import type {
+  PickCreateTodo,
+  PickUpdateTodo,
+  TodoQuery,
+} from "@repo/types/productivity.types";
 
 class TodoController {
   public async list(c: AppContext) {
     try {
       const data = await TodoService.list(c.query as TodoQuery);
-      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil daftar tugas");
+      return HttpResponse(c).ok(data, undefined);
     } catch (error) {
       console.error(error);
-      return HttpResponse(c).internalError(error, "Gagal mengambil daftar tugas");
+      return HttpResponse(c).internalError(error);
     }
   }
 
@@ -20,7 +24,7 @@ class TodoController {
       return HttpResponse(c).created(data, "Tugas berhasil dibuat");
     } catch (error) {
       console.error(error);
-      return HttpResponse(c).internalError(error, "Gagal membuat tugas");
+      return HttpResponse(c).internalError(error);
     }
   }
 
@@ -34,7 +38,7 @@ class TodoController {
       return HttpResponse(c).ok(data, undefined, "Tugas berhasil diperbarui");
     } catch (error) {
       console.error(error);
-      return HttpResponse(c).internalError(error, "Gagal memperbarui tugas");
+      return HttpResponse(c).internalError(error);
     }
   }
 
@@ -45,7 +49,7 @@ class TodoController {
       return HttpResponse(c).ok(data, undefined, "Tugas berhasil dihapus");
     } catch (error) {
       console.error(error);
-      return HttpResponse(c).internalError(error, "Gagal menghapus tugas");
+      return HttpResponse(c).internalError(error);
     }
   }
 }

@@ -143,17 +143,40 @@
   h4 {
     font-family: var(--font-heading), serif;
   }
+  *::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
 }
 
 .ghibli-bg {
-  background: radial-gradient(ellipse at 20% 0%, rgba(174, 198, 207, 0.45) 0%, transparent 55%),
-    radial-gradient(ellipse at 80% 10%, rgba(125, 175, 116, 0.25) 0%, transparent 50%),
+  background:
+    radial-gradient(
+      ellipse at 20% 0%,
+      rgba(174, 198, 207, 0.45) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 80% 10%,
+      rgba(125, 175, 116, 0.25) 0%,
+      transparent 50%
+    ),
     linear-gradient(180deg, #aec6cf33 0%, var(--background) 35%, #7daf7418 100%);
 }
 
 .dark .ghibli-bg {
-  background: radial-gradient(ellipse at 15% 0%, rgba(242, 201, 76, 0.12) 0%, transparent 45%),
-    radial-gradient(ellipse at 85% 20%, rgba(74, 78, 105, 0.35) 0%, transparent 50%),
+  background:
+    radial-gradient(
+      ellipse at 15% 0%,
+      rgba(242, 201, 76, 0.12) 0%,
+      transparent 45%
+    ),
+    radial-gradient(
+      ellipse at 85% 20%,
+      rgba(74, 78, 105, 0.35) 0%,
+      transparent 50%
+    ),
     linear-gradient(180deg, #243040 0%, var(--background) 40%, #1a2530 100%);
 }
 
@@ -230,7 +253,11 @@ input[type="number"] {
 
 /* Smooth transitions for better theme switching */
 * {
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    opacity 0.2s ease;
 }
 
 /* Enhanced backdrop blur support */
@@ -254,11 +281,15 @@ input[type="number"] {
 
 /* Enhanced shadow utilities for better theme support */
 .shadow-enhanced {
-  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 10px 25px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .dark .shadow-enhanced {
-  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 10px 25px -3px rgba(0, 0, 0, 0.4),
+    0 4px 6px -2px rgba(0, 0, 0, 0.1);
 }
 
 /* Custom text gradient utilities */
@@ -296,7 +327,9 @@ input[type="number"] {
 
 /* Enhanced hover effects */
 .hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .hover-lift:hover {

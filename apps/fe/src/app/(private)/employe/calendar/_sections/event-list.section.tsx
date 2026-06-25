@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import { format, isSameDay } from 'date-fns';
-import { id as idLocale } from 'date-fns/locale';
-import { Trash2 } from 'lucide-react';
+import { format, isSameDay } from "date-fns";
+import { id as idLocale } from "date-fns/locale";
+import { Trash2 } from "lucide-react";
 
-import { Button } from '@/components/atoms';
-import { GhibliCard } from '@/components/molecules/ghibli-card';
-import { GhibliEmptyState } from '@/components/molecules/ghibli-empty-state';
-import { useDeleteEvent, useEvents } from '@/hooks/calendar';
-import type { EventQuery } from '@/types/api/productivity';
+import { Button } from "@/components/atoms";
+import { GhibliCard } from "@/components/molecules/ghibli-card";
+import { GhibliEmptyState } from "@/components/template/ghibli-empty-state";
+import { useDeleteEvent, useEvents } from "@/hooks/calendar";
+import type { EventQuery } from "@/types/api/productivity";
 
 export function EventListSection({
   selectedDate,
@@ -20,12 +20,14 @@ export function EventListSection({
   const { data: events = [], isLoading } = useEvents(query);
   const deleteEvent = useDeleteEvent(query);
 
-  const dayEvents = events.filter((e) => isSameDay(new Date(e.startDate), selectedDate));
+  const dayEvents = events.filter((e) =>
+    isSameDay(new Date(e.startDate), selectedDate),
+  );
 
   return (
     <GhibliCard>
       <h2 className="font-serif text-lg font-semibold">
-        Agenda {format(selectedDate, 'd MMMM yyyy', { locale: idLocale })}
+        Agenda {format(selectedDate, "d MMMM yyyy", { locale: idLocale })}
       </h2>
 
       {isLoading ? (
@@ -50,7 +52,9 @@ export function EventListSection({
               <div>
                 <p className="font-medium">{event.title}</p>
                 <p className="text-xs text-muted-foreground">
-                  {format(new Date(event.startDate), 'HH:mm', { locale: idLocale })}
+                  {format(new Date(event.startDate), "HH:mm", {
+                    locale: idLocale,
+                  })}
                   {event.description && ` · ${event.description}`}
                 </p>
               </div>

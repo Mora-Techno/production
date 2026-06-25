@@ -1,17 +1,15 @@
 import CompanyService from "@/service/CompanyService";
 import AuthService from "@/service/AuthService";
 import { HttpResponse } from "@/http";
-import type { JwtPayload } from "@repo/types/auth.types";
 import type {
   PickCreateAdmin,
   PickRegisterCompany,
   PickUpdateCompanySubscription,
 } from "@repo/types/company.types";
 import type { AppContext } from "@/contex";
-
-function getUser(c: AppContext): JwtPayload {
-  return c.user as JwtPayload;
-}
+import { JwtPayload } from "@repo/types/auth.types";
+import { unauthorizedValidate } from "@/validation/auth.validate";
+import { CreateAdminValidate } from "@/validation/company.validate";
 
 class CompanyController {
   public async register(c: AppContext) {
@@ -25,60 +23,66 @@ class CompanyController {
         "Company dan akun leader berhasil dibuat",
       );
     } catch (error) {
-      console.error(error);
-      const message =
-        error instanceof Error ? error.message : "Gagal mendaftarkan company";
-      return HttpResponse(c).badRequest(message);
+      return HttpResponse(c).internalError(error);
     }
   }
 
+  // ROLE Leader
   public async createAdmin(c: AppContext) {
     try {
-      const user = getUser(c);
+      const user = c.user as JwtPayload;
+      const input = c.body as PickCreateAdmin;
 
-      if (user.companyRole !== "leader") {
-        return HttpResponse(c).forbidden("Hanya leader yang dapat membuat admin");
-      }
+      await unauthorizedValidate(user, c);
+      await CreateAdminValidate(c, input);
 
       if (!user.companyId) {
         return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
-      const body = c.body as PickCreateAdmin;
-      const data = await CompanyService.createAdmin(user.companyId, body);
+      const data = await CompanyService.createAdmin(user.companyId, input);
+
+      if (!data) {
+        return HttpResponse(c).badRequest();
+      }
 
       return HttpResponse(c).created(data, "Admin berhasil dibuat");
     } catch (error) {
-      console.error(error);
-      const message =
-        error instanceof Error ? error.message : "Gagal membuat admin";
-      return HttpResponse(c).badRequest(message);
+      return HttpResponse(c).internalError(error);
     }
   }
 
+  // ROLE [leader, admin]
   public async listAdmins(c: AppContext) {
     try {
-      const user = getUser(c);
+      const user = c.user as JwtPayload;
 
-      if (!["leader", "admin"].includes(user.companyRole)) {
-        return HttpResponse(c).forbidden("Akses ditolak");
-      }
+      await unauthorizedValidate(user, c);
 
       if (!user.companyId) {
         return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
       const data = await CompanyService.listAdmins(user.companyId);
-      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil daftar admin");
+
+      if (!data) {
+        return HttpResponse(c).badRequest();
+      }
+      return HttpResponse(c).ok(
+        data,
+
+        "Berhasil mengambil daftar admin",
+      );
     } catch (error) {
-      console.error(error);
-      return HttpResponse(c).internalError(error, "Gagal mengambil daftar admin");
+      return HttpResponse(c).internalError(error);
     }
   }
 
   public async getProfile(c: AppContext) {
     try {
-      const user = getUser(c);
+      const user = c.user as JwtPayload;
+
+      await unauthorizedValidate(user, c);
 
       if (!user.companyId) {
         return HttpResponse(c).notFound("Company tidak ditemukan");
@@ -87,28 +91,28 @@ class CompanyController {
       const data = await CompanyService.getById(user.companyId);
       if (!data) return HttpResponse(c).notFound("Company tidak ditemukan");
 
-      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil profil company");
+      return HttpResponse(c).ok(
+        data,
+        undefined,
+        "Berhasil mengambil profil company",
+      );
     } catch (error) {
-      console.error(error);
-      return HttpResponse(c).internalError(error, "Gagal mengambil profil company");
+      return HttpResponse(c).internalError(error);
     }
   }
 
+  // Role [Admin]
   public async updateSubscription(c: AppContext) {
     try {
-      const user = getUser(c);
+      const user = c.user as JwtPayload;
+      const body = c.body as PickUpdateCompanySubscription;
 
-      if (user.companyRole !== "leader") {
-        return HttpResponse(c).forbidden(
-          "Hanya leader yang dapat mengubah langganan",
-        );
-      }
+      await unauthorizedValidate(user, c);
 
       if (!user.companyId) {
         return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
-      const body = c.body as PickUpdateCompanySubscription;
       const data = await CompanyService.updateSubscription(
         user.companyId,
         body,
@@ -116,10 +120,9 @@ class CompanyController {
 
       if (!data) return HttpResponse(c).notFound("Company tidak ditemukan");
 
-      return HttpResponse(c).ok(data, undefined, "Langganan berhasil diperbarui");
+      return HttpResponse(c).ok(data, "Langganan berhasil diperbarui");
     } catch (error) {
-      console.error(error);
-      return HttpResponse(c).internalError(error, "Gagal memperbarui langganan");
+      return HttpResponse(c).internalError(error);
     }
   }
 }

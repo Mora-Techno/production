@@ -17,10 +17,14 @@ class App {
     this.app.get("/", () => "Hello Elysia! Bun js");
   }
   private middlewares() {
-    this.app.use(helmet());
-    this.app.use(swaggerPlugin);
+    this.app.use(
+      helmet({
+        contentSecurityPolicy: false,
+      }),
+    );
     this.app.use(cors({ origin: "*" }));
     this.app.use(apiRoutes);
+    this.app.use(swaggerPlugin);
   }
 }
 

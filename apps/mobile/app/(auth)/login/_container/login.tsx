@@ -1,6 +1,5 @@
-import { View } from 'react-native';
-
-import LoginSection from '@/components/section/auth/login/page-section';
+import { View } from "react-native";
+import LoginSection from "@/components/section/auth/login/page-section";
 
 const LoginContainer = () => {
   return (

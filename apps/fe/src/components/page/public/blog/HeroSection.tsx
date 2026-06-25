@@ -1,5 +1,4 @@
-import InitialTemplate from "@/components/template/InitialTemplate";
-
+import { GhibliEmptyState } from "@/components/molecules";
 interface BlogSectionProps {
   template: {
     title: string;
@@ -10,7 +9,7 @@ interface BlogSectionProps {
 const BlogSection: React.FC<BlogSectionProps> = ({ template }) => {
   return (
     <section className="w-full min-h-screen">
-      <InitialTemplate decs={template.desc} title={template.title} />
+      <GhibliEmptyState description={template.desc} title={template.title} />
     </section>
   );
 };
