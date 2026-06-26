@@ -33,8 +33,11 @@ class CompanyController {
       const user = c.user as JwtPayload;
       const input = c.body as PickCreateAdmin;
 
-      await unauthorizedValidate(user, c);
-      await CreateAdminValidate(c, input);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateRespone = await CreateAdminValidate(c, input);
+      if (validateRespone) return validateRespone;
 
       if (!user.companyId) {
         return HttpResponse(c).notFound("Company tidak ditemukan");
@@ -57,7 +60,8 @@ class CompanyController {
     try {
       const user = c.user as JwtPayload;
 
-      await unauthorizedValidate(user, c);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
 
       if (!user.companyId) {
         return HttpResponse(c).notFound("Company tidak ditemukan");
@@ -82,7 +86,8 @@ class CompanyController {
     try {
       const user = c.user as JwtPayload;
 
-      await unauthorizedValidate(user, c);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
 
       if (!user.companyId) {
         return HttpResponse(c).notFound("Company tidak ditemukan");
@@ -107,7 +112,8 @@ class CompanyController {
       const user = c.user as JwtPayload;
       const body = c.body as PickUpdateCompanySubscription;
 
-      await unauthorizedValidate(user, c);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
 
       if (!user.companyId) {
         return HttpResponse(c).notFound("Company tidak ditemukan");

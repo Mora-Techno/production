@@ -16,17 +16,15 @@ class CalendarController {
   public async list(c: AppContext) {
     try {
       const user = c.user as JwtPayload;
-      await unauthorizedValidate(user, c);
+
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
 
       const data = await CalendarService.list(c.query);
       if (!data) {
         return HttpResponse(c).badRequest();
       }
-      return HttpResponse(c).ok(
-        data,
-        undefined,
-        "Berhasil mengambil jadwal kalender",
-      );
+      return HttpResponse(c).ok(data, "Berhasil mengambil jadwal kalender");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -37,8 +35,12 @@ class CalendarController {
       const user = c.user as JwtPayload;
       const input = c.body as PickCreateEvent;
 
-      await CreateEventValidation(input, c);
-      await unauthorizedValidate(user, c);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateRespone = await CreateEventValidation(input, c);
+      if (validateRespone) return validateRespone;
+
       const data = await CalendarService.create(input);
 
       if (!data) {
@@ -56,8 +58,12 @@ class CalendarController {
       const input = c.body as PickUpdateEvent;
       const params = c.params as { id: string };
 
-      await unauthorizedValidate(user, c);
-      await paramsValidate(params.id, c);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateParams = await paramsValidate(params.id, c);
+      if (validateParams) return validateParams;
+
       const data = await CalendarService.update(params.id, input);
       if (!data) {
         return HttpResponse(c).notFound("Jadwal tidak ditemukan");
@@ -73,8 +79,11 @@ class CalendarController {
       const user = c.user as JwtPayload;
       const params = c.params as { id: string };
 
-      await unauthorizedValidate(user, c);
-      await paramsValidate(params.id, c);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateParams = await paramsValidate(params.id, c);
+      if (validateParams) return validateParams;
 
       const data = await CalendarService.remove(params.id);
 

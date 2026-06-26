@@ -13,10 +13,14 @@ class NotificationController {
   public async send(c: AppContext) {
     try {
       const user = c.user as JwtPayload;
-      await unauthorizedValidate(user, c);
       const input = c.body as PickSendNotification;
 
-      await SendNotifValidation(c, input);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateRespone = await SendNotifValidation(c, input);
+      if (validateRespone) return validateRespone;
+
       const data = await NotificationService.send(input);
       if (!data) {
         return HttpResponse(c).badRequest();
@@ -32,7 +36,9 @@ class NotificationController {
     try {
       const user = c.user as JwtPayload;
 
-      await unauthorizedValidate(user, c);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
       const data = await NotificationService.listLogs({
         status: c.query.status as NotificationLogQuery["status"],
         limit: c.query.limit ? Number(c.query.limit) : undefined,

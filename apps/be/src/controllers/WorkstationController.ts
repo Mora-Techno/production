@@ -18,7 +18,9 @@ class WorkstationController {
     try {
       const user = c.user as JwtPayload;
 
-      await unauthorizedValidate(user, c);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
       if (!user.companyId) {
         return HttpResponse(c).notFound("Company tidak ditemukan");
       }
@@ -37,11 +39,14 @@ class WorkstationController {
   public async getById(c: AppContext) {
     try {
       const user = c.user as JwtPayload;
-      await unauthorizedValidate(user, c);
-
       const params = c.params as { id: string };
 
-      await paramsValidate(params.id, c);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateParams = await paramsValidate(params.id, c);
+      if (validateParams) return validateParams;
+
       if (!user.companyId) {
         return HttpResponse(c).notFound("Company tidak ditemukan");
       }
@@ -58,9 +63,13 @@ class WorkstationController {
   public async create(c: AppContext) {
     try {
       const user = c.user as JwtPayload;
-      await unauthorizedValidate(user, c);
       const body = c.body as PickCreateWorkstation;
-      await CreateWorkStationValidate(c, body);
+
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateRespone = await CreateWorkStationValidate(c, body);
+      if (validateRespone) return validateRespone;
 
       if (!user.companyId) {
         return HttpResponse(c).notFound("Company tidak ditemukan");
@@ -81,12 +90,14 @@ class WorkstationController {
   public async update(c: AppContext) {
     try {
       const user = c.user as JwtPayload;
-
-      await unauthorizedValidate(user, c);
-
       const params = c.params as { id: string };
 
-      await paramsValidate(params.id, c);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateParams = await paramsValidate(params.id, c);
+      if (validateParams) return validateParams;
+
       if (!user.companyId) {
         return HttpResponse(c).notFound("Company tidak ditemukan");
       }
@@ -113,14 +124,19 @@ class WorkstationController {
   public async remove(c: AppContext) {
     try {
       const user = c.user as JwtPayload;
+      const params = c.params as { id: string };
 
-      await unauthorizedValidate(user, c);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateParams = await paramsValidate(params.id, c);
+      if (validateParams) return validateParams;
 
       if (!user.companyId) {
         return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
-      const data = await WorkstationService.remove(c.params.id, user.companyId);
+      const data = await WorkstationService.remove(params.id, user.companyId);
       if (!data) return HttpResponse(c).notFound("Workstation tidak ditemukan");
 
       return HttpResponse(c).ok(
@@ -137,8 +153,13 @@ class WorkstationController {
   public async inviteMember(c: AppContext) {
     try {
       const user = c.user as JwtPayload;
+      const params = c.params as { id: string };
 
-      await unauthorizedValidate(user, c);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateParams = await paramsValidate(params.id, c);
+      if (validateParams) return validateParams;
 
       if (!user.companyId) {
         return HttpResponse(c).notFound("Company tidak ditemukan");
@@ -146,7 +167,7 @@ class WorkstationController {
 
       const body = c.body as PickInviteMember;
       const data = await WorkstationService.inviteMember(
-        c.params.id,
+        params.id,
         user.companyId,
         body,
       );
@@ -165,24 +186,31 @@ class WorkstationController {
   public async removeMember(c: AppContext) {
     try {
       const user = c.user as JwtPayload;
+      const params = c.params as { id: string; userID: string };
 
-      await unauthorizedValidate(user, c);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateParams = await paramsValidate(params.id, c);
+      if (validateParams) return validateParams;
+
+      const validateUserParams = await paramsValidate(params.userID, c);
+      if (validateUserParams) return validateUserParams;
 
       if (!user.companyId) {
         return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
       const data = await WorkstationService.removeMember(
-        c.params.id,
+        params.id,
         user.companyId,
-        c.params.userId,
+        params.userID,
       );
 
       if (!data) return HttpResponse(c).notFound("Anggota tidak ditemukan");
 
       return HttpResponse(c).ok(
         data,
-
         "Anggota berhasil dihapus dari workstation",
       );
     } catch (error) {

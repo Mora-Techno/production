@@ -13,7 +13,10 @@ class MusicController {
   public async list(c: AppContext) {
     try {
       const user = c.user as JwtPayload;
-      await unauthorizedValidate(user, c);
+
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
       const data = await MusicService.list();
 
       if (!data) {
@@ -28,9 +31,13 @@ class MusicController {
   public async create(c: AppContext) {
     try {
       const user = c.user as JwtPayload;
-      await unauthorizedValidate(user, c);
       const input = c.body as PickCreatePlaylist;
-      await CreateMusicValidate(c, input);
+
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateRespone = await CreateMusicValidate(c, input);
+      if (validateRespone) return validateRespone;
 
       const data = await MusicService.create(input);
       if (!data) {
@@ -45,9 +52,14 @@ class MusicController {
   public async remove(c: AppContext) {
     try {
       const user = c.user as JwtPayload;
-      await unauthorizedValidate(user, c);
       const params = c.params as { id: string };
-      await paramsValidate(params.id, c);
+
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateParams = await paramsValidate(params.id, c);
+      if (validateParams) return validateParams;
+
       const data = await MusicService.remove(params.id);
       if (!data) return HttpResponse(c).notFound("Playlist tidak ditemukan");
       return HttpResponse(c).ok(data, undefined, "Playlist berhasil dihapus");

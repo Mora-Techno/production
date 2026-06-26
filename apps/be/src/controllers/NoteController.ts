@@ -16,7 +16,9 @@ class NoteController {
   public async list(c: AppContext) {
     try {
       const user = c.user as JwtPayload;
-      await unauthorizedValidate(user, c);
+
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
 
       const data = await NoteService.list();
 
@@ -33,10 +35,15 @@ class NoteController {
   public async getById(c: AppContext) {
     try {
       const user = c.user as JwtPayload;
-      await unauthorizedValidate(user, c);
       const params = c.params as { id: string };
-      await paramsValidate(params.id, c);
-      const data = await NoteService.getById(c.params.id);
+
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateParams = await paramsValidate(params.id, c);
+      if (validateParams) return validateParams;
+
+      const data = await NoteService.getById(params.id);
       if (!data) return HttpResponse(c).notFound("Catatan tidak ditemukan");
       return HttpResponse(c).ok(data, "Berhasil mengambil detail catatan");
     } catch (error) {
@@ -47,11 +54,15 @@ class NoteController {
   public async create(c: AppContext) {
     try {
       const user = c.user as JwtPayload;
-      await unauthorizedValidate(user, c);
       const input = c.body as PickCreateNote;
-      await CreateNoteValidation(c, input);
 
-      const data = await NoteService.create(c.body as PickCreateNote);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateRespone = await CreateNoteValidation(c, input);
+      if (validateRespone) return validateRespone;
+
+      const data = await NoteService.create(input);
       if (!data) {
         return HttpResponse(c).badRequest();
       }
@@ -64,10 +75,13 @@ class NoteController {
   public async update(c: AppContext) {
     try {
       const user = c.user as JwtPayload;
-      await unauthorizedValidate(user, c);
-
       const params = c.params as { id: string };
-      await paramsValidate(params.id, c);
+
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateParams = await paramsValidate(params.id, c);
+      if (validateParams) return validateParams;
 
       const input = c.body as PickUpdateNote;
 
@@ -81,7 +95,16 @@ class NoteController {
 
   public async remove(c: AppContext) {
     try {
-      const data = await NoteService.remove(c.params.id);
+      const user = c.user as JwtPayload;
+      const params = c.params as { id: string };
+
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateParams = await paramsValidate(params.id, c);
+      if (validateParams) return validateParams;
+
+      const data = await NoteService.remove(params.id);
       if (!data) return HttpResponse(c).notFound("Catatan tidak ditemukan");
       return HttpResponse(c).ok(data, "Catatan berhasil dihapus");
     } catch (error) {
