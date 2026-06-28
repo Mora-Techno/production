@@ -1,4 +1,4 @@
-export type TodoStatus = 'pending' | 'completed';
+export type TodoStatus = "pending" | "completed";
 
 export interface Todo {
   id: string;
@@ -11,7 +11,7 @@ export interface Todo {
 
 export interface TodoQuery {
   status?: TodoStatus;
-  date?: 'today';
+  date?: "today";
 }
 
 export interface CreateTodoInput {
@@ -41,16 +41,6 @@ export interface CreateNoteInput {
 export interface UpdateNoteInput {
   title: string;
   content: string;
-}
-
-export interface CalendarEvent {
-  id: string;
-  title: string;
-  description: string | null;
-  startDate: string;
-  endDate: string | null;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface EventQuery {
@@ -84,7 +74,7 @@ export interface CreatePlaylistInput {
   url: string;
 }
 
-export type NotificationStatus = 'success' | 'failed';
+export type NotificationStatus = "success" | "failed";
 
 export interface NotificationLog {
   id: string;
@@ -107,8 +97,8 @@ export interface SendNotificationInput {
   body: string;
 }
 
-export type TimeFormat = '24h' | '12h';
-export type ThemePreference = 'light' | 'dark' | 'system';
+export type TimeFormat = "24h" | "12h";
+export type ThemePreference = "light" | "dark" | "system";
 
 export interface Settings {
   id: string;

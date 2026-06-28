@@ -1,5 +1,5 @@
 import { NOTE_ENDPOINTS, noteById } from '../endpoints/note.endpoints';
-import type { Note, PickCreateNote, PickUpdateNote } from '../types/productivity.types';
+import type { Note, PickCreateNote, PickUpdateNote } from '../types/note.types';
 import type { TResponse } from '../types/response.types';
 import { DeleteResponse, GetResponse, PostResponse, PutResponse } from './http';
 import { toServiceResponse } from './service-response';

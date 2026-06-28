@@ -4,7 +4,7 @@ import type { AppContext } from "@/contex";
 import type {
   PickCreateEvent,
   PickUpdateEvent,
-} from "@repo/types/productivity.types";
+} from "@repo/types/calendar.types";
 import { JwtPayload } from "@repo/types/auth.types";
 import { CreateEventValidation } from "@/validation/calender.validate";
 import {

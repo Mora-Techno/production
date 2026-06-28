@@ -9,8 +9,8 @@ import { Button } from "@/components/atoms";
 import { GhibliCard } from "@/components/molecules/ghibli-card";
 import { GhibliEmptyState } from "@/components/template/ghibli-empty-state";
 import { TodoCheckbox } from "@/components/molecules/todo-checkbox";
-import { useTodos } from "@/hooks/todo";
-import { useUpdateTodo } from "@/hooks/todo";
+import { useTodos } from "@/hooks/useApi/todo";
+import { useUpdateTodo } from "@/hooks/useApi/todo";
 
 export function TodayTodosWidget() {
   const { data: todos = [], isLoading } = useTodos({ date: "today" });

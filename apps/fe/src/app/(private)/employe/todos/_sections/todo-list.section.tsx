@@ -8,7 +8,7 @@ import { GhibliCard } from "@/components/molecules/ghibli-card";
 import { GhibliEmptyState } from "@/components/template/ghibli-empty-state";
 import { GhibliTabs } from "@/components/molecules/ghibli-tabs";
 import { TodoCheckbox } from "@/components/molecules/todo-checkbox";
-import { useDeleteTodo, useTodos, useUpdateTodo } from "@/hooks/todo";
+import { useDeleteTodo, useTodos, useUpdateTodo } from "@/hooks/useApi/todo";
 import { useGsapStagger } from "@/hooks/useGsapStagger";
 
 type TabValue = "all" | "pending" | "completed";

@@ -4,7 +4,7 @@ import type { AppContext } from "@/contex";
 import type {
   PickCreateNote,
   PickUpdateNote,
-} from "@repo/types/productivity.types";
+} from "@repo/types/note.types";
 import { JwtPayload } from "@repo/types/auth.types";
 import {
   paramsValidate,

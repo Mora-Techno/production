@@ -1,5 +1,5 @@
 import prisma from "prisma/client";
-import type { PickCreatePlaylist } from "@repo/types/productivity.types";
+import type { PickCreatePlaylist } from "@repo/types/music.types";
 
 class MusicService {
   public async list() {

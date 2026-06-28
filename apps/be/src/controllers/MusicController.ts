@@ -1,7 +1,7 @@
 import MusicService from "@/service/MusicService";
 import { HttpResponse } from "@/http";
 import type { AppContext } from "@/contex";
-import type { PickCreatePlaylist } from "@repo/types/productivity.types";
+import type { PickCreatePlaylist } from "@repo/types/music.types";
 import { JwtPayload } from "@repo/types/auth.types";
 import {
   paramsValidate,

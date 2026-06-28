@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
-import { PageHeader } from '@/components/molecules/page-header';
-import { useNotes } from '@/hooks/note';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { PageHeader } from "@/components/molecules/page-header";
+import { useNotes } from "@/hooks/useApi/note";
+import { useIsMobile } from "@/hooks/use-mobile";
 
-import { NoteEditorSection } from '../_sections/note-editor.section';
-import { NoteListSection } from '../_sections/note-list.section';
+import { NoteEditorSection } from "../_sections/note-editor.section";
+import { NoteListSection } from "../_sections/note-list.section";
 
 export default function NotesContainer() {
   const isMobile = useIsMobile();
@@ -18,7 +18,10 @@ export default function NotesContainer() {
 
   return (
     <div className="animate-in fade-in duration-700">
-      <PageHeader title="Notes" description="Simpan ide, jurnal harian, dan snippet kode." />
+      <PageHeader
+        title="Notes"
+        description="Simpan ide, jurnal harian, dan snippet kode."
+      />
 
       {isMobile ? (
         <NoteListSection />

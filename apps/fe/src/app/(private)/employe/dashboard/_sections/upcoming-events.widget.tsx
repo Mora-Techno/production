@@ -8,7 +8,7 @@ import Link from "next/link";
 import { Button } from "@/components/atoms";
 import { GhibliCard } from "@/components/molecules/ghibli-card";
 import { GhibliEmptyState } from "@/components/template/ghibli-empty-state";
-import { useEvents } from "@/hooks/calendar";
+import { useEvents } from "@/hooks/useApi/calendar";
 
 export function UpcomingEventsWidget() {
   const now = new Date();

@@ -7,7 +7,7 @@ import type {
   EventQuery,
   PickCreateEvent,
   PickUpdateEvent,
-} from "../types/productivity.types";
+} from "../types/calendar.types";
 import type { TResponse } from "../types/response.types";
 import {
   DeleteResponse,
@@ -17,6 +17,7 @@ import {
   withQuery,
 } from "./http";
 import { toServiceResponse } from "./service-response";
+import { PickApiID } from "@repo/types/api.types";
 
 export async function ListEvents(
   query?: EventQuery,
@@ -41,28 +42,24 @@ export async function CreateEvent(
 }
 
 export async function UpdateEvent(
-  id: string,
+  id: PickApiID,
   payload: PickUpdateEvent,
 ): Promise<TResponse<CalendarEvent>> {
   const res = await PatchResponse<CalendarEvent>(
-    calendarEventById(id),
+    calendarEventById(id.id),
     payload,
   );
   return toServiceResponse(res, { message: "Jadwal berhasil diperbarui" });
 }
 
 export async function DeleteEvent(
-  id: string,
+  id: PickApiID,
 ): Promise<TResponse<CalendarEvent>> {
-  const res = await DeleteResponse<CalendarEvent>(calendarEventById(id));
+  const res = await DeleteResponse<CalendarEvent>(calendarEventById(id.id));
   return toServiceResponse(res, { message: "Jadwal berhasil dihapus" });
 }
 
 export const CalendarService = {
-  ListEvents,
-  CreateEvent,
-  UpdateEvent,
-  DeleteEvent,
   list: ListEvents,
   create: CreateEvent,
   update: UpdateEvent,

@@ -1,4 +1,4 @@
-import { PickCreateTodo } from "@repo/types/productivity.types";
+import { PickCreateTodo } from "@repo/types/todo.types";
 import { AppContext } from "@/contex";
 import { HttpResponse } from "@/http";
 

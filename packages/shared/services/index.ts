@@ -32,7 +32,6 @@ export * from "./settings.service";
 export * from "./subscription.service";
 export * from "./todo.service";
 export * from "./workstation.service";
-export * from "./http";
 export { toServiceResponse } from "./service-response";
 
 export const Api = {

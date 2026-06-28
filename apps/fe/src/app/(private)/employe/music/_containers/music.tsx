@@ -11,7 +11,7 @@ import {
   useCreatePlaylist,
   useDeletePlaylist,
   usePlaylists,
-} from "@/hooks/music";
+} from "@/hooks/useApi/music";
 import { useGsapStagger } from "@/hooks/useGsapStagger";
 
 const DEFAULT_PLAYLISTS = [

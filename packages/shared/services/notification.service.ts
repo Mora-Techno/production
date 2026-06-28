@@ -3,7 +3,7 @@ import type {
   NotificationLog,
   NotificationLogQuery,
   PickSendNotification,
-} from '../types/productivity.types';
+} from '../types/notification.types';
 import type { TResponse } from '../types/response.types';
 import { GetResponse, PostResponse, withQuery } from './http';
 import { toServiceResponse } from './service-response';

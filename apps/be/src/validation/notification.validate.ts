@@ -1,6 +1,6 @@
 import { AppContext } from "@/contex";
 import { HttpResponse } from "@/http";
-import { PickSendNotification } from "@repo/types/productivity.types";
+import { PickSendNotification } from "@repo/types/notification.types";
 
 export async function SendNotifValidation(
   c: AppContext,

@@ -7,7 +7,7 @@ import { Trash2 } from "lucide-react";
 import { Button } from "@/components/atoms";
 import { GhibliCard } from "@/components/molecules/ghibli-card";
 import { GhibliEmptyState } from "@/components/template/ghibli-empty-state";
-import { useDeleteEvent, useEvents } from "@/hooks/calendar";
+import { useDeleteEvent, useEvents } from "@/hooks/useApi/calendar";
 import type { EventQuery } from "@/types/api/productivity";
 
 export function EventListSection({

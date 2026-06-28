@@ -1,6 +1,6 @@
 import { AppContext } from "@/contex";
 import { HttpResponse } from "@/http";
-import { PickCreateNote } from "@repo/types/productivity.types";
+import { PickCreateNote } from "@repo/types/note.types";
 
 export async function CreateNoteValidation(
   c: AppContext,

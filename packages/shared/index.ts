@@ -20,14 +20,7 @@ export {
   WorkstationService,
   toServiceResponse,
 } from "./services";
-export * from "./services/http";
-export {
-  default as FetchClient,
-  FetchError,
-  setBaseURLProvider,
-  setOnUnauthorized,
-  setTokenProvider,
-} from "./utils/api";
+
 export { ReactQueryClientProvider } from "./react-query/query-client";
 export { useMutationWrapper } from "./react-query/mutation-wrapper";
 export { transformParams } from "./react-query/query-params";

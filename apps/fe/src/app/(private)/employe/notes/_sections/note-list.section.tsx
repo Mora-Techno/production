@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/atoms";
 import { GhibliCard } from "@/components/molecules/ghibli-card";
 import { GhibliEmptyState } from "@/components/template/ghibli-empty-state";
-import { useCreateNote, useDeleteNote, useNotes } from "@/hooks/note";
+import { useCreateNote, useDeleteNote, useNotes } from "@/hooks/useApi/note";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useGsapStagger } from "@/hooks/useGsapStagger";
 import { cn } from "@/utils/classname";

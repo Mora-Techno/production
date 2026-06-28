@@ -1,6 +1,6 @@
 import { AppContext } from "@/contex";
 import { HttpResponse } from "@/http";
-import { PickCreatePlaylist } from "@repo/types/productivity.types";
+import { PickCreatePlaylist } from "@repo/types/music.types";
 
 export async function CreateMusicValidate(
   c: AppContext,

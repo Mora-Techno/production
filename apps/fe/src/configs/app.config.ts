@@ -1,6 +1,7 @@
 import { RegisterProps } from "@/types/ui";
 import { BookOpen, History, Home, User, Building2 } from "lucide-react";
 import React from "react";
+import { env } from "./env.config";
 
 interface AppConfig {
   name: string;

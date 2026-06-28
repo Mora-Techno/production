@@ -5,7 +5,7 @@ import type {
   PickCreateTodo,
   PickUpdateTodo,
   TodoQuery,
-} from "@repo/types/productivity.types";
+} from "@repo/types/todo.types";
 import { JwtPayload } from "@repo/types/auth.types";
 import {
   paramsValidate,

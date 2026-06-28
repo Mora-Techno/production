@@ -1,5 +1,5 @@
 import { TODO_ENDPOINTS, todoById } from '../endpoints/todo.endpoints';
-import type { PickCreateTodo, PickUpdateTodo, Todo, TodoQuery } from '../types/productivity.types';
+import type { PickCreateTodo, PickUpdateTodo, Todo, TodoQuery } from '../types/todo.types';
 import type { TResponse } from '../types/response.types';
 import { DeleteResponse, GetResponse, PatchResponse, PostResponse, withQuery } from './http';
 import { toServiceResponse } from './service-response';

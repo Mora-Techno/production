@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/atoms";
 import { GhibliCard } from "@/components/molecules/ghibli-card";
-import { useCreateEvent } from "@/hooks/calendar";
+import { useCreateEvent } from "@/hooks/useApi/calendar";
 import type { EventQuery } from "@/types/api/productivity";
 
 export function EventFormSection({

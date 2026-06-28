@@ -5,7 +5,7 @@ import {
 import type {
   MusicPlaylist,
   PickCreatePlaylist,
-} from "../types/productivity.types";
+} from "../types/music.types";
 import type { TResponse } from "../types/response.types";
 import { DeleteResponse, GetResponse, PostResponse } from "./http";
 import { toServiceResponse } from "./service-response";

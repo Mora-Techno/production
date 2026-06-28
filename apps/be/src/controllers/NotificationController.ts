@@ -4,7 +4,7 @@ import type { AppContext } from "@/contex";
 import type {
   NotificationLogQuery,
   PickSendNotification,
-} from "@repo/types/productivity.types";
+} from "@repo/types/notification.types";
 import { JwtPayload } from "@repo/types/auth.types";
 import { unauthorizedValidate } from "@/validation/auth.validate";
 import { SendNotifValidation } from "@/validation/notification.validate";

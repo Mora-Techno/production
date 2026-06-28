@@ -6,19 +6,20 @@ import { GhibliCard } from "@/components/molecules/ghibli-card";
 import { LoginFormSection } from "@/components/page/auth";
 import { useState } from "react";
 import { PickLogin } from "@repo/types";
-import { useLogin } from "@/hooks/auth";
 import { GoogleSvg } from "@/components/atoms/svg";
 import { useGoogleLogin } from "@react-oauth/google";
 import { RegisterConfigRoutes } from "@/configs";
 import { RegisterCard } from "@/components/molecules";
+import { useApi } from "@/hooks/useApi/useApi";
 
 export default function LoginContainer() {
+  const api = useApi();
   const [formLogin, setFormLogin] = useState<PickLogin>({
     email: "",
     password: "",
   });
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const login = useLogin();
+  const login = api.auth.mutate.login();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
