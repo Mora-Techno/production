@@ -5,7 +5,6 @@ import noteRoutes from "./noteRoutes";
 import calendarRoutes from "./calendarRoutes";
 import musicRoutes from "./musicRoutes";
 import notificationRoutes from "./notificationRoutes";
-import settingsRoutes from "./settingsRoutes";
 import companyRoutes from "./companyRoutes";
 import workstationRoutes from "./workstationRoutes";
 import subscriptionRoutes from "./subscriptionRoutes";
@@ -35,8 +34,7 @@ class ApiRouter {
       .use(noteRoutes)
       .use(calendarRoutes)
       .use(musicRoutes)
-      .use(notificationRoutes)
-      .use(settingsRoutes);
+      .use(notificationRoutes);
   }
 }
 

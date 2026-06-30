@@ -3,7 +3,7 @@ import type {
   PickCreateEvent,
   EventQuery,
   PickUpdateEvent,
-} from "@repo/types/productivity.types";
+} from "@repo/types/calendar.types";
 
 class CalendarService {
   public async list(query: EventQuery) {

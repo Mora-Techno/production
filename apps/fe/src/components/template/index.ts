@@ -1,1 +1,1 @@
-export * from "./InitialTemplate";
+export * from "./ghibli-empty-state";

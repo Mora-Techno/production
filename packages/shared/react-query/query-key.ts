@@ -1,8 +1,6 @@
-import type {
-  EventQuery,
-  NotificationLogQuery,
-  TodoQuery,
-} from "../types/productivity.types";
+import type { EventQuery } from "../types/calendar.types";
+import type { NotificationLogQuery } from "../types/notification.types";
+import type { TodoQuery } from "../types/todo.types";
 
 export const queryKey = {
   todosRoot: () => ["todos"] as const,

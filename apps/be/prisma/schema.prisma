@@ -7,6 +7,174 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Company {
+  id                   String           @id @default(uuid())
+  name                 String
+  tier                 SubscriptionTier @default(free)
+  billingCycle         BillingCycle     @default(monthly)
+  subscriptionStartsAt DateTime         @default(now())
+  subscriptionEndsAt   DateTime?
+  leaderId             String           @unique
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  stripeCustomerId     String?
+  xenditCustomerId     String?
+  members              User[]           @relation("CompanyMembers")
+  leader               User             @relation("CompanyLeader", fields: [leaderId], references: [id])
+  payments             Payment[]
+  subscription         Subscription?
+  workstations         Workstation[]
+
+  @@map("companies")
+}
+
+model User {
+  id                    String              @id @default(uuid())
+  email                 String              @unique
+  fullName              String
+  password              String
+  token                 String?
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  otp                   String?
+  expOtp                DateTime?
+  isVerify              Boolean?            @default(false)
+  companyRole           CompanyRole         @default(employee)
+  companyId             String?
+  phone                 String?             @unique
+  refreshToken          String?
+  refreshTokenExpiresAt DateTime?
+  magicLinkToken        String?
+  magicLinkExpiresAt    DateTime?
+  company               Company?            @relation("CompanyMembers", fields: [companyId], references: [id])
+  ownedCompany          Company?            @relation("CompanyLeader")
+  workstationMembers    WorkstationMember[]
+  createdWorkstations   Workstation[]       @relation("WorkstationCreator")
+
+  @@map("User")
+}
+
+model Workstation {
+  id          String              @id @default(uuid())
+  name        String
+  companyId   String
+  createdById String
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  members     WorkstationMember[]
+  company     Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy   User                @relation("WorkstationCreator", fields: [createdById], references: [id])
+
+  @@map("workstations")
+}
+
+model WorkstationMember {
+  id            String                @id @default(uuid())
+  workstationId String
+  userId        String
+  role          WorkstationMemberRole @default(member)
+  joinedAt      DateTime              @default(now())
+  user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workstation   Workstation           @relation(fields: [workstationId], references: [id], onDelete: Cascade)
+
+  @@unique([workstationId, userId])
+  @@map("workstation_members")
+}
+
+model Subscription {
+  id                     String             @id @default(uuid())
+  companyId              String             @unique
+  tier                   SubscriptionTier
+  billingCycle           BillingCycle
+  status                 SubscriptionStatus @default(active)
+  provider               PaymentProvider?
+  providerCustomerId     String?
+  providerSubscriptionId String?
+  currentPeriodStart     DateTime?
+  currentPeriodEnd       DateTime?
+  cancelAtPeriodEnd      Boolean            @default(false)
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
+  payments               Payment[]
+  company                Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+model Payment {
+  id                String           @id @default(uuid())
+  companyId         String
+  subscriptionId    String?
+  provider          PaymentProvider
+  providerPaymentId String?
+  amount            Int
+  currency          String
+  status            PaymentStatus    @default(pending)
+  tier              SubscriptionTier
+  billingCycle      BillingCycle
+  metadata          Json?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  company           Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  subscription      Subscription?    @relation(fields: [subscriptionId], references: [id])
+
+  @@map("payments")
+}
+
+model Todo {
+  id        String     @id @default(uuid())
+  text      String
+  status    TodoStatus @default(pending)
+  dueDate   DateTime?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("todos")
+}
+
+model Note {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("notes")
+}
+
+model CalendarEvent {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  startDate   DateTime
+  endDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("calendar_events")
+}
+
+model MusicPlaylist {
+  id        String   @id @default(uuid())
+  title     String
+  url       String
+  createdAt DateTime @default(now())
+
+  @@map("music_playlists")
+}
+
+model NotificationLog {
+  id        String             @id @default(uuid())
+  recipient String
+  subject   String
+  body      String
+  status    NotificationStatus
+  error     String?
+  createdAt DateTime           @default(now())
+
+  @@map("notification_logs")
+}
+
 enum CompanyRole {
   leader
   admin
@@ -48,197 +216,12 @@ enum WorkstationMemberRole {
   member
 }
 
-model Company {
-  id                   String           @id @default(uuid())
-  name                 String
-  tier                 SubscriptionTier @default(free)
-  billingCycle         BillingCycle     @default(monthly)
-  subscriptionStartsAt DateTime         @default(now())
-  subscriptionEndsAt   DateTime?
-  leaderId             String           @unique
-  stripeCustomerId     String?
-  xenditCustomerId     String?
-  createdAt            DateTime         @default(now())
-  updatedAt            DateTime         @updatedAt
-
-  leader       User          @relation("CompanyLeader", fields: [leaderId], references: [id])
-  members      User[]        @relation("CompanyMembers")
-  workstations Workstation[]
-  subscription Subscription?
-  payments     Payment[]
-
-  @@map("companies")
-}
-
-model User {
-  id                    String       @id @default(uuid())
-  email                 String       @unique
-  phone                 String?      @unique
-  fullName              String
-  password              String
-  token                 String?
-  refreshToken          String?
-  refreshTokenExpiresAt DateTime?
-  magicLinkToken        String?
-  magicLinkExpiresAt    DateTime?
-  companyRole           CompanyRole  @default(employee)
-  companyId             String?
-  createdAt             DateTime     @default(now())
-  updatedAt             DateTime     @updatedAt
-  otp                   String?
-  expOtp                DateTime?
-  isVerify              Boolean?     @default(false)
-
-  company             Company?            @relation("CompanyMembers", fields: [companyId], references: [id])
-  ownedCompany        Company?            @relation("CompanyLeader")
-  createdWorkstations Workstation[]       @relation("WorkstationCreator")
-  workstationMembers  WorkstationMember[]
-
-  @@map("User")
-}
-
-model Workstation {
-  id          String   @id @default(uuid())
-  name        String
-  companyId   String
-  createdById String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  company   Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  createdBy User                @relation("WorkstationCreator", fields: [createdById], references: [id])
-  members   WorkstationMember[]
-
-  @@map("workstations")
-}
-
-model WorkstationMember {
-  id            String                @id @default(uuid())
-  workstationId String
-  userId        String
-  role          WorkstationMemberRole @default(member)
-  joinedAt      DateTime              @default(now())
-
-  workstation Workstation @relation(fields: [workstationId], references: [id], onDelete: Cascade)
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([workstationId, userId])
-  @@map("workstation_members")
-}
-
-model Subscription {
-  id                     String             @id @default(uuid())
-  companyId              String             @unique
-  tier                   SubscriptionTier
-  billingCycle           BillingCycle
-  status                 SubscriptionStatus @default(active)
-  provider               PaymentProvider?
-  providerCustomerId     String?
-  providerSubscriptionId String?
-  currentPeriodStart     DateTime?
-  currentPeriodEnd       DateTime?
-  cancelAtPeriodEnd      Boolean            @default(false)
-  createdAt              DateTime           @default(now())
-  updatedAt              DateTime           @updatedAt
-
-  company  Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  payments Payment[]
-
-  @@map("subscriptions")
-}
-
-model Payment {
-  id                String           @id @default(uuid())
-  companyId         String
-  subscriptionId    String?
-  provider          PaymentProvider
-  providerPaymentId String?
-  amount            Int
-  currency          String
-  status            PaymentStatus    @default(pending)
-  tier              SubscriptionTier
-  billingCycle      BillingCycle
-  metadata          Json?
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-
-  company      Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  subscription Subscription? @relation(fields: [subscriptionId], references: [id], onDelete: SetNull)
-
-  @@map("payments")
-}
-
 enum TodoStatus {
   pending
   completed
 }
 
-model Todo {
-  id        String     @id @default(uuid())
-  text      String
-  status    TodoStatus @default(pending)
-  dueDate   DateTime?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-
-  @@map("todos")
-}
-
-model Note {
-  id        String   @id @default(uuid())
-  title     String
-  content   String   @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("notes")
-}
-
-model CalendarEvent {
-  id          String    @id @default(uuid())
-  title       String
-  description String?   @db.Text
-  startDate   DateTime
-  endDate     DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  @@map("calendar_events")
-}
-
-model MusicPlaylist {
-  id        String   @id @default(uuid())
-  title     String
-  url       String
-  createdAt DateTime @default(now())
-
-  @@map("music_playlists")
-}
-
 enum NotificationStatus {
   success
   failed
-}
-
-model NotificationLog {
-  id        String             @id @default(uuid())
-  recipient String
-  subject   String
-  body      String             @db.Text
-  status    NotificationStatus
-  error     String?
-  createdAt DateTime           @default(now())
-
-  @@map("notification_logs")
-}
-
-model Settings {
-  id                   String   @id @default(uuid())
-  timeFormat           String   @default("24h")
-  defaultNotifications Boolean  @default(true)
-  theme                String   @default("system")
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-
-  @@map("settings")
 }

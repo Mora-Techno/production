@@ -1,9 +1,49 @@
 import { AppContext } from "@/contex";
 
+type RequestTimingStore = {
+  startedAt?: number;
+};
+
+function isGetRequest(c: AppContext) {
+  return c.request.method.toUpperCase() === "GET";
+}
+
+function formatProcessTime(c: AppContext) {
+  const store = c.store as RequestTimingStore | undefined;
+  if (!store?.startedAt) {
+    return "0ms";
+  }
+
+  const durationMs = Math.max(
+    0,
+    Math.round(performance.now() - store.startedAt),
+  );
+
+  return `${durationMs}ms`;
+}
+
+function buildGetResponseMeta(c: AppContext, meta?: unknown) {
+  const process_time = formatProcessTime(c);
+
+  if (meta && typeof meta === "object" && !Array.isArray(meta)) {
+    return {
+      ...(meta as Record<string, unknown>),
+      process_time,
+    };
+  }
+
+  return { process_time };
+}
+
 export function HttpResponse(c: AppContext) {
   return {
-    ok: (data?: any, meta?: any, message = "Berhasil") =>
-      c.json?.({ status: 200, message, data, meta }, 200),
+    ok: (data?: any, meta?: any, message = "Berhasil") => {
+      const responseMeta = isGetRequest(c)
+        ? buildGetResponseMeta(c, meta)
+        : meta;
+
+      return c.json?.({ status: 200, message, data, meta: responseMeta }, 200);
+    },
     created: (data?: any, message = "Berhasil dibuat") =>
       c.json?.({ status: 201, message, data }, 201),
     accepted: (data?: any, message = "Permintaan diterima") =>
@@ -24,14 +64,11 @@ export function HttpResponse(c: AppContext) {
       c.json?.({ status: 422, message }, 422),
     tooManyRequests: (message = "Terlalu banyak permintaan") =>
       c.json?.({ status: 429, message }, 429),
-    internalError: (
-      error?: unknown,
-      message = "Terjadi kesalahan pada server",
-    ) =>
+    internalError: (error?: unknown) =>
       c.json?.(
         {
           status: 500,
-          message,
+          message: "Terjadi kesalahan pada server",
           error: error instanceof Error ? error.message : error,
         },
         500,

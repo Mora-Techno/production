@@ -4,7 +4,7 @@ import prisma from "prisma/client";
 import type {
   NotificationLogQuery,
   PickSendNotification,
-} from "@repo/types/productivity.types";
+} from "@repo/types/notification.types";
 
 class NotificationService {
   private createTransporter() {

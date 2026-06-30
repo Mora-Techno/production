@@ -15,22 +15,49 @@ export type HttpStatusCode =
   | 503;
 
 export interface ApiSuccessResponse<T = unknown> {
-  message: string;
   data: T;
-  statusCode: HttpStatusCode;
-}
-
-export interface ApiErrorResponse<E = unknown> {
   message: string;
-  statusCode: HttpStatusCode;
-  error?: E;
+  success?: boolean;
+  errors?: Record<string, string[]>;
+  status?: number;
+  statusCode?: number;
 }
 
-export interface ApiFieldError {
-  field: string;
-  message: string;
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number,
+    public readonly errors?: Record<string, string[]>,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+
+  get isAuthError() {
+    return this.status === 401;
+  }
+  get isForbidden() {
+    return this.status === 403;
+  }
+  get isNotFound() {
+    return this.status === 404;
+  }
+  get isValidationError() {
+    return this.status === 422;
+  }
 }
 
-export type ApiResponse<T = unknown, E = unknown> =
-  | ApiSuccessResponse<T>
-  | ApiErrorResponse<E>;
+export type TPagedList<T> = {
+  items: T[];
+  totalData: number;
+  totalPages: number;
+};
+
+export type TPagedListResponse<T> = ApiSuccessResponse<TPagedList<T>>;
+
+export interface IApi {
+  id: string;
+  query: string;
+}
+
+export type PickApiID = Pick<IApi, "id">;

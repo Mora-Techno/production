@@ -1,51 +1,96 @@
 import CalendarService from "@/service/CalendarService";
 import { HttpResponse } from "@/http";
 import type { AppContext } from "@/contex";
-import type { PickCreateEvent, PickUpdateEvent } from "@repo/types/productivity.types";
+import type {
+  PickCreateEvent,
+  PickUpdateEvent,
+} from "@repo/types/calendar.types";
+import { JwtPayload } from "@repo/types/auth.types";
+import { CreateEventValidation } from "@/validation/calender.validate";
+import {
+  paramsValidate,
+  unauthorizedValidate,
+} from "@/validation/auth.validate";
 
 class CalendarController {
   public async list(c: AppContext) {
     try {
+      const user = c.user as JwtPayload;
+
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
       const data = await CalendarService.list(c.query);
-      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil jadwal kalender");
+      if (!data) {
+        return HttpResponse(c).badRequest();
+      }
+      return HttpResponse(c).ok(data, "Berhasil mengambil jadwal kalender");
     } catch (error) {
-      console.error(error);
-      return HttpResponse(c).internalError(error, "Gagal mengambil jadwal kalender");
+      return HttpResponse(c).internalError(error);
     }
   }
 
   public async create(c: AppContext) {
     try {
-      const data = await CalendarService.create(c.body as PickCreateEvent);
+      const user = c.user as JwtPayload;
+      const input = c.body as PickCreateEvent;
+
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateRespone = await CreateEventValidation(input, c);
+      if (validateRespone) return validateRespone;
+
+      const data = await CalendarService.create(input);
+
+      if (!data) {
+        return HttpResponse(c).badRequest();
+      }
       return HttpResponse(c).created(data, "Jadwal berhasil ditambahkan");
     } catch (error) {
-      console.error(error);
-      return HttpResponse(c).internalError(error, "Gagal menambahkan jadwal");
+      return HttpResponse(c).internalError(error);
     }
   }
 
   public async update(c: AppContext) {
     try {
-      const data = await CalendarService.update(
-        c.params.id,
-        c.body as PickUpdateEvent,
-      );
-      if (!data) return HttpResponse(c).notFound("Jadwal tidak ditemukan");
-      return HttpResponse(c).ok(data, undefined, "Jadwal berhasil diperbarui");
+      const user = c.user as JwtPayload;
+      const input = c.body as PickUpdateEvent;
+      const params = c.params as { id: string };
+
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateParams = await paramsValidate(params.id, c);
+      if (validateParams) return validateParams;
+
+      const data = await CalendarService.update(params.id, input);
+      if (!data) {
+        return HttpResponse(c).notFound("Jadwal tidak ditemukan");
+      }
+      return HttpResponse(c).ok(data, "Jadwal berhasil diperbarui");
     } catch (error) {
-      console.error(error);
-      return HttpResponse(c).internalError(error, "Gagal memperbarui jadwal");
+      return HttpResponse(c).internalError(error);
     }
   }
 
   public async remove(c: AppContext) {
     try {
-      const data = await CalendarService.remove(c.params.id);
+      const user = c.user as JwtPayload;
+      const params = c.params as { id: string };
+
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateParams = await paramsValidate(params.id, c);
+      if (validateParams) return validateParams;
+
+      const data = await CalendarService.remove(params.id);
+
       if (!data) return HttpResponse(c).notFound("Jadwal tidak ditemukan");
-      return HttpResponse(c).ok(data, undefined, "Jadwal berhasil dihapus");
+      return HttpResponse(c).ok(data, "Jadwal berhasil dihapus");
     } catch (error) {
-      console.error(error);
-      return HttpResponse(c).internalError(error, "Gagal menghapus jadwal");
+      return HttpResponse(c).internalError(error);
     }
   }
 }

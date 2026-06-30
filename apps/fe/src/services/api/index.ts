@@ -1,4 +1,5 @@
 import {
+  AuthService,
   CalendarService,
   CompanyService,
   MusicService,
@@ -8,12 +9,10 @@ import {
   SubscriptionService,
   TodoService,
   WorkstationService,
-} from '@repo/services';
-
-import { AuthApi } from './auth.api';
+} from "@repo/services";
 
 export const Api = {
-  Auth: AuthApi,
+  Auth: AuthService,
   Todo: TodoService,
   Note: NoteService,
   Calendar: CalendarService,
@@ -24,14 +23,3 @@ export const Api = {
   Workstation: WorkstationService,
   Subscription: SubscriptionService,
 };
-
-export { AuthApi } from './auth.api';
-export { CalendarService as CalendarApi } from '@repo/services';
-export { MusicService as MusicApi } from '@repo/services';
-export { NoteService as NoteApi } from '@repo/services';
-export { NotificationService as NotificationApi } from '@repo/services';
-export { SettingsService as SettingsApi } from '@repo/services';
-export { SubscriptionService as SubscriptionApi } from '@repo/services';
-export { TodoService as TodoApi } from '@repo/services';
-
-export default Api;

@@ -1,6 +1,7 @@
 import { RegisterProps } from "@/types/ui";
 import { BookOpen, History, Home, User, Building2 } from "lucide-react";
 import React from "react";
+import { env } from "./env.config";
 
 interface AppConfig {
   name: string;
@@ -119,7 +120,7 @@ export const SIDEBAR_MENU = [
   { name: "Profil", url: "/profile", icon: User, subMenu: [] },
 ];
 
-export const PUBLIC_ROUTES = ["/", "/resource", "/blogs", "/pricing"];
+export const PUBLIC_ROUTES = ["/", "/home", "/resource", "/blogs", "/pricing"];
 export const AUTH_ROUTES = ["/login", "/register", "/forgot-password"];
 
 export const RegisterConfigRoutes: RegisterProps[] = [

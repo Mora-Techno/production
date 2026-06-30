@@ -4,24 +4,17 @@ import { helmet } from "elysia-helmet";
 import apiRoutes from "./routes/apiRoutes";
 import swaggerPlugin from "./swagger";
 
-class App {
-  public app: Elysia;
+const app = new Elysia()
+  .use(
+    helmet({
+      // Swagger UI (Scalar) butuh script/style inline.
+      contentSecurityPolicy: false,
+    }),
+  )
+  .use(cors({ origin: "*" }))
+  .get("/", () => "Hello Elysia! Bun js")
+  .use(apiRoutes)
+  // Swagger harus setelah semua route agar OpenAPI spec ter-generate lengkap.
+  .use(swaggerPlugin);
 
-  constructor() {
-    this.app = new Elysia();
-    this.middlewares();
-    this.routes();
-  }
-
-  private routes(): void {
-    this.app.get("/", () => "Hello Elysia! Bun js");
-  }
-  private middlewares() {
-    this.app.use(helmet());
-    this.app.use(swaggerPlugin);
-    this.app.use(cors({ origin: "*" }));
-    this.app.use(apiRoutes);
-  }
-}
-
-export default new App().app;
+export default app;

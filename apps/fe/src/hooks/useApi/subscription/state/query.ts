@@ -1,0 +1,24 @@
+import { useQuery } from "@tanstack/react-query";
+import { queryKey } from "@/configs";
+import { Api } from "@/services/api";
+
+export function useSubscription() {
+  return useQuery({
+    queryKey: queryKey.subscriptions.me(),
+    queryFn: async () => {
+      const res = await Api.Subscription.getMine();
+      return res.data;
+    },
+  });
+}
+
+export function useSubscriptionPlans() {
+  return useQuery({
+    queryKey: queryKey.subscriptions.plans(),
+    queryFn: async () => {
+      const res = await Api.Subscription.getPlans();
+      return res.data;
+    },
+    staleTime: 1000 * 60 * 10,
+  });
+}

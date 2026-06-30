@@ -1,4 +1,4 @@
-import type { TResponse } from '../types/response.types';
+import type { ApiSuccessResponse } from "../types/api.types";
 
 type ServiceResponseOverride = {
   message?: string;
@@ -6,12 +6,11 @@ type ServiceResponseOverride = {
 };
 
 export function toServiceResponse<T>(
-  res: TResponse<T>,
+  res: ApiSuccessResponse<T>,
   override?: ServiceResponseOverride,
-): TResponse<T> {
+): ApiSuccessResponse<T> {
   return {
     data: res.data,
     message: override?.message ?? res.message,
-    statusCode: override?.statusCode ?? res.statusCode,
   };
 }

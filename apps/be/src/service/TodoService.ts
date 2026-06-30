@@ -4,7 +4,7 @@ import type {
   PickCreateTodo,
   PickUpdateTodo,
   TodoQuery,
-} from "@repo/types/productivity.types";
+} from "@repo/types/todo.types";
 
 class TodoService {
   public async list(query: TodoQuery) {

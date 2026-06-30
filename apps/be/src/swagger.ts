@@ -1,13 +1,19 @@
 import swagger from "@elysiajs/swagger";
 
 const swaggerPlugin = swagger({
-  path: "/docs",
+  path: "/api-docs",
+  specPath: "/api-docs/json",
+  scalarConfig: {
+    spec: {
+      url: "/api-docs/json",
+    },
+  },
   documentation: {
     info: {
-      title: "Produtify Workstation API",
+      title: "Productify Workstation API",
       version: "1.0.0",
       description:
-        "REST API Produtify Workstation — Company, Workstation, Productivity, dan Wellness.",
+        "REST API Productify Workstation — Company, Workstation, Productivity, dan Wellness.",
     },
     tags: [
       {

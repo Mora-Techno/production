@@ -2,7 +2,7 @@ import prisma from "prisma/client";
 import type {
   PickCreateNote,
   PickUpdateNote,
-} from "@repo/types/productivity.types";
+} from "@repo/types/note.types";
 
 class NoteService {
   public async list() {
