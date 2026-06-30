@@ -1,11 +1,9 @@
-import * as React from "react";
+import * as React from 'react';
 
-import { Input } from "@/components/atoms";
-import { cn } from "@/utils/classname";
+import { Input } from '@/components/atoms';
+import { cn } from '@/utils/classname';
 
-export interface DecoratedInputProps extends React.ComponentProps<
-  typeof Input
-> {
+export interface DecoratedInputProps extends React.ComponentProps<typeof Input> {
   iconLeft?: React.ReactNode;
   iconRight?: React.ReactNode;
 }
@@ -22,11 +20,7 @@ const DecoratedInput = React.forwardRef<HTMLInputElement, DecoratedInputProps>(
 
         <Input
           ref={ref}
-          className={cn(
-            iconLeft ? "pl-10" : "",
-            iconRight ? "pr-10" : "",
-            className,
-          )}
+          className={cn(iconLeft ? 'pl-10' : '', iconRight ? 'pr-10' : '', className)}
           {...props}
         />
 
@@ -40,6 +34,6 @@ const DecoratedInput = React.forwardRef<HTMLInputElement, DecoratedInputProps>(
   },
 );
 
-DecoratedInput.displayName = "DecoratedInput";
+DecoratedInput.displayName = 'DecoratedInput';
 
 export { DecoratedInput };

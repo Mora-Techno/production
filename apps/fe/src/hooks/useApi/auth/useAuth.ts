@@ -1,4 +1,4 @@
-import { useLogin, useLogout, useRegister } from "./state/mutate";
+import { useLogin, useLogout, useRegister } from './state/mutate';
 
 export const useAuth = () => {
   return {

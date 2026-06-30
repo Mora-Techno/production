@@ -1,68 +1,85 @@
 'use client';
-import { createContext, useContext, useState } from 'react';
-import { toast } from 'react-hot-toast';
 
+import { createContext, useContext, useState } from 'react';
+
+import { GooeyToaster } from '@/components/atoms/goey-toaster';
 import { AlertModal } from '@/core/components/alert-modal';
-import { ToastEffect } from '@/core/components/alert-toast';
-import { AlertContexType } from '@/types/ui';
-import { ModalProps } from '@/types/ui';
-import { ToastProps } from '@/types/ui';
+import { showAlertToast } from '@/core/components/alert-toast';
+import type { AlertContexType, ModalProps, ToastProps } from '@/types/ui';
+
 const AlertContex = createContext<AlertContexType | undefined>(undefined);
 
 export const useAlert = (): AlertContexType => {
   const contex = useContext(AlertContex);
-  if (!contex) throw new Error('useAlert must be used within an AlertProvider');
+  if (!contex) {
+    throw new Error('useAlert must be used within an AlertProvider');
+  }
+
   return contex;
 };
+
 export const AlertProvinder = ({ children }: { children: React.ReactNode }) => {
   const [modal, setModal] = useState<ModalProps | null>(null);
-  const [resolver, setResolver] = useState<(res: boolean) => void>();
+  const [resolver, setResolver] = useState<((res: boolean) => void) | null>(null);
 
-  const toastAlert = ({ message, title, icon, onVoid }: ToastProps) => {
-    toast.custom((t) => (
-      <ToastEffect t={t} title={title} message={message} icon={icon} onVoid={onVoid} />
-    ));
+  const toastAlert = (payload: ToastProps) => {
+    showAlertToast(payload);
   };
 
-  const showModal = (p: ModalProps) => {
-    setModal(p);
+  const showModal = (payload: ModalProps) => {
+    setResolver(null);
+    setModal(payload);
   };
 
-  const confirm = (p: ModalProps): Promise<boolean> => {
-    setModal(p);
+  const confirm = (payload: ModalProps): Promise<boolean> => {
+    setModal(payload);
+
     return new Promise((resolve) => {
       setResolver(() => resolve);
     });
   };
 
+  const closeModal = () => {
+    setModal(null);
+    setResolver(null);
+  };
+
   const handleConfirm = () => {
     modal?.onConfirm?.();
-    setModal(null);
     resolver?.(true);
+    closeModal();
   };
+
   const handleCancel = () => {
     modal?.onClose?.();
-    setModal(null);
-    resolver?.(true);
+    resolver?.(false);
+    closeModal();
   };
+
+  const isConfirmDialog = Boolean(resolver);
 
   return (
     <AlertContex.Provider value={{ toast: toastAlert, modal: showModal, confirm }}>
       {children}
-      {modal && (
+      <GooeyToaster />
+      {modal ? (
         <AlertModal
-          open={!!modal}
-          setOpen={() => setModal(null)}
+          open
+          setOpen={(open) => {
+            if (!open) {
+              handleCancel();
+            }
+          }}
           title={modal.title}
           deskripsi={modal.deskripsi}
           icon={modal.icon}
           confirmButtonText={modal.confirmButtonText || 'OK'}
           confirmButtonColor={modal.confirmButtonColor || 'bg-primary'}
           onConfirm={handleConfirm}
-          cancelText={'Batal'}
-          onCancel={handleCancel}
+          cancelText={isConfirmDialog ? 'Batal' : undefined}
+          onCancel={isConfirmDialog ? handleCancel : undefined}
         />
-      )}
+      ) : null}
     </AlertContex.Provider>
   );
 };

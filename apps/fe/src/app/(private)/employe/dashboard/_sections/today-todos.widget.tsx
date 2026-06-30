@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { format } from "date-fns";
-import { id as idLocale } from "date-fns/locale";
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { format } from 'date-fns';
+import { id as idLocale } from 'date-fns/locale';
+import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
-import { Button } from "@/components/atoms";
-import { GhibliCard } from "@/components/molecules/ghibli-card";
-import { GhibliEmptyState } from "@/components/template/ghibli-empty-state";
-import { TodoCheckbox } from "@/components/molecules/todo-checkbox";
-import { useTodos } from "@/hooks/useApi/todo";
-import { useUpdateTodo } from "@/hooks/useApi/todo";
+import { Button } from '@/components/atoms';
+import { GhibliCard } from '@/components/molecules/ghibli-card';
+import { TodoCheckbox } from '@/components/molecules/todo-checkbox';
+import { GhibliEmptyState } from '@/components/template/ghibli-empty-state';
+import { useTodos } from '@/hooks/useApi/todo';
+import { useUpdateTodo } from '@/hooks/useApi/todo';
 
 export function TodayTodosWidget() {
-  const { data: todos = [], isLoading } = useTodos({ date: "today" });
-  const updateTodo = useUpdateTodo({ date: "today" });
+  const { data: todos = [], isLoading } = useTodos({ date: 'today' });
+  const updateTodo = useUpdateTodo({ date: 'today' });
   const limited = todos.slice(0, 5);
 
   return (
@@ -49,28 +49,28 @@ export function TodayTodosWidget() {
               className="flex items-center gap-3 rounded-xl bg-background/50 px-3 py-2"
             >
               <TodoCheckbox
-                checked={todo.status === "completed"}
+                checked={todo.status === 'completed'}
                 disabled={updateTodo.isPending}
                 onChange={(checked) =>
                   updateTodo.mutate({
                     id: todo.id,
-                    payload: { status: checked ? "completed" : "pending" },
-                    filters: { date: "today" },
+                    payload: { status: checked ? 'completed' : 'pending' },
+                    filters: { date: 'today' },
                   })
                 }
               />
               <span
                 className={
-                  todo.status === "completed"
-                    ? "flex-1 text-sm text-muted-foreground line-through"
-                    : "flex-1 text-sm"
+                  todo.status === 'completed'
+                    ? 'flex-1 text-sm text-muted-foreground line-through'
+                    : 'flex-1 text-sm'
                 }
               >
                 {todo.text}
               </span>
               {todo.dueDate && (
                 <span className="text-xs text-muted-foreground">
-                  {format(new Date(todo.dueDate), "HH:mm", {
+                  {format(new Date(todo.dueDate), 'HH:mm', {
                     locale: idLocale,
                   })}
                 </span>

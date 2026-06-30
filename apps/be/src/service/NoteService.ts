@@ -1,8 +1,5 @@
-import prisma from "prisma/client";
-import type {
-  PickCreateNote,
-  PickUpdateNote,
-} from "@repo/types/note.types";
+import prisma from 'prisma/client';
+import type { PickCreateNote, PickUpdateNote } from '@repo/types/note.types';
 
 class NoteService {
   public async list() {
@@ -14,7 +11,7 @@ class NoteService {
         createdAt: true,
         updatedAt: true,
       },
-      orderBy: { updatedAt: "desc" },
+      orderBy: { updatedAt: 'desc' },
     });
   }
 

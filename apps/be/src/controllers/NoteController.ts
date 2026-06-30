@@ -1,16 +1,10 @@
-import NoteService from "@/service/NoteService";
-import { HttpResponse } from "@/http";
-import type { AppContext } from "@/contex";
-import type {
-  PickCreateNote,
-  PickUpdateNote,
-} from "@repo/types/note.types";
-import { JwtPayload } from "@repo/types/auth.types";
-import {
-  paramsValidate,
-  unauthorizedValidate,
-} from "@/validation/auth.validate";
-import { CreateNoteValidation } from "@/validation/note.validate";
+import NoteService from '@/service/NoteService';
+import { HttpResponse } from '@/http';
+import type { AppContext } from '@/contex';
+import type { PickCreateNote, PickUpdateNote } from '@repo/types/note.types';
+import { JwtPayload } from '@repo/types/auth.types';
+import { paramsValidate, unauthorizedValidate } from '@/validation/auth.validate';
+import { CreateNoteValidation } from '@/validation/note.validate';
 
 class NoteController {
   public async list(c: AppContext) {
@@ -26,7 +20,7 @@ class NoteController {
         return HttpResponse(c).badRequest();
       }
 
-      return HttpResponse(c).ok(data, "Berhasil mengambil daftar catatan");
+      return HttpResponse(c).ok(data, 'Berhasil mengambil daftar catatan');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -44,8 +38,8 @@ class NoteController {
       if (validateParams) return validateParams;
 
       const data = await NoteService.getById(params.id);
-      if (!data) return HttpResponse(c).notFound("Catatan tidak ditemukan");
-      return HttpResponse(c).ok(data, "Berhasil mengambil detail catatan");
+      if (!data) return HttpResponse(c).notFound('Catatan tidak ditemukan');
+      return HttpResponse(c).ok(data, 'Berhasil mengambil detail catatan');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -66,7 +60,7 @@ class NoteController {
       if (!data) {
         return HttpResponse(c).badRequest();
       }
-      return HttpResponse(c).created(data, "Catatan berhasil disimpan");
+      return HttpResponse(c).created(data, 'Catatan berhasil disimpan');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -86,8 +80,8 @@ class NoteController {
       const input = c.body as PickUpdateNote;
 
       const data = await NoteService.update(params.id, input);
-      if (!data) return HttpResponse(c).notFound("Catatan tidak ditemukan");
-      return HttpResponse(c).ok(data, "Catatan berhasil diperbarui");
+      if (!data) return HttpResponse(c).notFound('Catatan tidak ditemukan');
+      return HttpResponse(c).ok(data, 'Catatan berhasil diperbarui');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -105,8 +99,8 @@ class NoteController {
       if (validateParams) return validateParams;
 
       const data = await NoteService.remove(params.id);
-      if (!data) return HttpResponse(c).notFound("Catatan tidak ditemukan");
-      return HttpResponse(c).ok(data, "Catatan berhasil dihapus");
+      if (!data) return HttpResponse(c).notFound('Catatan tidak ditemukan');
+      return HttpResponse(c).ok(data, 'Catatan berhasil dihapus');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

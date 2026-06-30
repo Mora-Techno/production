@@ -1,17 +1,10 @@
-import TodoService from "@/service/TodoService";
-import { HttpResponse } from "@/http";
-import type { AppContext } from "@/contex";
-import type {
-  PickCreateTodo,
-  PickUpdateTodo,
-  TodoQuery,
-} from "@repo/types/todo.types";
-import { JwtPayload } from "@repo/types/auth.types";
-import {
-  paramsValidate,
-  unauthorizedValidate,
-} from "@/validation/auth.validate";
-import { CreateTodoValidate } from "@/validation/todo.validate";
+import TodoService from '@/service/TodoService';
+import { HttpResponse } from '@/http';
+import type { AppContext } from '@/contex';
+import type { PickCreateTodo, PickUpdateTodo, TodoQuery } from '@repo/types/todo.types';
+import { JwtPayload } from '@repo/types/auth.types';
+import { paramsValidate, unauthorizedValidate } from '@/validation/auth.validate';
+import { CreateTodoValidate } from '@/validation/todo.validate';
 
 class TodoController {
   public async list(c: AppContext) {
@@ -24,7 +17,7 @@ class TodoController {
       const data = await TodoService.list(c.query as TodoQuery);
 
       if (!data) {
-        return HttpResponse(c).badRequest("");
+        return HttpResponse(c).badRequest('');
       }
       return HttpResponse(c).ok(data, undefined);
     } catch (error) {
@@ -49,7 +42,7 @@ class TodoController {
       if (!data) {
         return HttpResponse(c).badRequest();
       }
-      return HttpResponse(c).created(data, "Tugas berhasil dibuat");
+      return HttpResponse(c).created(data, 'Tugas berhasil dibuat');
     } catch (error) {
       console.error(error);
       return HttpResponse(c).internalError(error);
@@ -70,9 +63,9 @@ class TodoController {
       const body = c.body as PickUpdateTodo;
 
       const data = await TodoService.update(params.id, body);
-      if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
+      if (!data) return HttpResponse(c).notFound('Tugas tidak ditemukan');
 
-      return HttpResponse(c).ok(data, "Tugas berhasil diperbarui");
+      return HttpResponse(c).ok(data, 'Tugas berhasil diperbarui');
     } catch (error) {
       console.error(error);
       return HttpResponse(c).internalError(error);
@@ -91,8 +84,8 @@ class TodoController {
       if (validateParams) return validateParams;
 
       const data = await TodoService.remove(params.id);
-      if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
-      return HttpResponse(c).ok(data, "Tugas berhasil dihapus");
+      if (!data) return HttpResponse(c).notFound('Tugas tidak ditemukan');
+      return HttpResponse(c).ok(data, 'Tugas berhasil dihapus');
     } catch (error) {
       console.error(error);
       return HttpResponse(c).internalError(error);

@@ -1,16 +1,10 @@
-import CalendarService from "@/service/CalendarService";
-import { HttpResponse } from "@/http";
-import type { AppContext } from "@/contex";
-import type {
-  PickCreateEvent,
-  PickUpdateEvent,
-} from "@repo/types/calendar.types";
-import { JwtPayload } from "@repo/types/auth.types";
-import { CreateEventValidation } from "@/validation/calender.validate";
-import {
-  paramsValidate,
-  unauthorizedValidate,
-} from "@/validation/auth.validate";
+import CalendarService from '@/service/CalendarService';
+import { HttpResponse } from '@/http';
+import type { AppContext } from '@/contex';
+import type { PickCreateEvent, PickUpdateEvent } from '@repo/types/calendar.types';
+import { JwtPayload } from '@repo/types/auth.types';
+import { CreateEventValidation } from '@/validation/calender.validate';
+import { paramsValidate, unauthorizedValidate } from '@/validation/auth.validate';
 
 class CalendarController {
   public async list(c: AppContext) {
@@ -24,7 +18,7 @@ class CalendarController {
       if (!data) {
         return HttpResponse(c).badRequest();
       }
-      return HttpResponse(c).ok(data, "Berhasil mengambil jadwal kalender");
+      return HttpResponse(c).ok(data, 'Berhasil mengambil jadwal kalender');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -46,7 +40,7 @@ class CalendarController {
       if (!data) {
         return HttpResponse(c).badRequest();
       }
-      return HttpResponse(c).created(data, "Jadwal berhasil ditambahkan");
+      return HttpResponse(c).created(data, 'Jadwal berhasil ditambahkan');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -66,9 +60,9 @@ class CalendarController {
 
       const data = await CalendarService.update(params.id, input);
       if (!data) {
-        return HttpResponse(c).notFound("Jadwal tidak ditemukan");
+        return HttpResponse(c).notFound('Jadwal tidak ditemukan');
       }
-      return HttpResponse(c).ok(data, "Jadwal berhasil diperbarui");
+      return HttpResponse(c).ok(data, 'Jadwal berhasil diperbarui');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -87,8 +81,8 @@ class CalendarController {
 
       const data = await CalendarService.remove(params.id);
 
-      if (!data) return HttpResponse(c).notFound("Jadwal tidak ditemukan");
-      return HttpResponse(c).ok(data, "Jadwal berhasil dihapus");
+      if (!data) return HttpResponse(c).notFound('Jadwal tidak ditemukan');
+      return HttpResponse(c).ok(data, 'Jadwal berhasil dihapus');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

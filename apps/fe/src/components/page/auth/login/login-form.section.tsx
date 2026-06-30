@@ -1,7 +1,8 @@
-import { PickLogin } from "@repo/types";
-import { DecoratedInput } from "@/components/wrapper";
-import { EyeClosed, Eye } from "lucide-react";
-import { ActionButton } from "@/components/wrapper";
+import { PickLogin } from '@repo/types';
+import { Eye, EyeClosed } from 'lucide-react';
+
+import { DecoratedInput } from '@/components/wrapper';
+import { ActionButton } from '@/components/wrapper';
 
 interface LoginFormSectionProps {
   state: {
@@ -17,10 +18,7 @@ interface LoginFormSectionProps {
   };
 }
 
-const LoginFormSection: React.FC<LoginFormSectionProps> = ({
-  state,
-  service,
-}) => {
+const LoginFormSection: React.FC<LoginFormSectionProps> = ({ state, service }) => {
   const { formLogin, setFormLogin, setShowPassword, showPassword } = state;
 
   return (
@@ -50,7 +48,7 @@ const LoginFormSection: React.FC<LoginFormSectionProps> = ({
         </label>
         <DecoratedInput
           id="password"
-          type={showPassword ? "text" : "password"}
+          type={showPassword ? 'text' : 'password'}
           value={formLogin.password}
           iconRight={
             showPassword ? (
@@ -76,12 +74,8 @@ const LoginFormSection: React.FC<LoginFormSectionProps> = ({
           className="w-full rounded-xl border border-input bg-background/80 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring"
         />
       </div>
-      <ActionButton
-        type="submit"
-        className=" w-full"
-        disabled={service.isPending}
-      >
-        {service.isPending ? "Memproses..." : "Masuk"}
+      <ActionButton type="submit" className=" w-full" disabled={service.isPending}>
+        {service.isPending ? 'Memproses...' : 'Masuk'}
       </ActionButton>
     </form>
   );

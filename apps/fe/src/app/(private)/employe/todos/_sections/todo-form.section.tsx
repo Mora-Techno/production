@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import { Button } from "@/components/atoms";
-import { GhibliCard } from "@/components/molecules/ghibli-card";
-import { useCreateTodo } from "@/hooks/useApi/todo";
+import { Button } from '@/components/atoms';
+import { GhibliCard } from '@/components/molecules/ghibli-card';
+import { useCreateTodo } from '@/hooks/useApi/todo';
 
 export function TodoFormSection({
   filters,
 }: {
-  filters?: { status?: "pending" | "completed" };
+  filters?: { status?: 'pending' | 'completed' };
 }) {
-  const [text, setText] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const [text, setText] = useState('');
+  const [dueDate, setDueDate] = useState('');
   const createTodo = useCreateTodo(filters);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -25,8 +25,8 @@ export function TodoFormSection({
       },
       {
         onSuccess: () => {
-          setText("");
-          setDueDate("");
+          setText('');
+          setDueDate('');
         },
       },
     );
@@ -48,11 +48,7 @@ export function TodoFormSection({
           onChange={(e) => setDueDate(e.target.value)}
           className="w-full rounded-xl border border-input bg-background/80 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
         />
-        <Button
-          type="submit"
-          className="ghibli-btn w-full"
-          disabled={createTodo.isPending}
-        >
+        <Button type="submit" className="ghibli-btn w-full" disabled={createTodo.isPending}>
           Tambah Tugas
         </Button>
       </form>

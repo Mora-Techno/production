@@ -1,1 +1,1 @@
-export * from "./ghibli-empty-state";
+export * from './ghibli-empty-state';

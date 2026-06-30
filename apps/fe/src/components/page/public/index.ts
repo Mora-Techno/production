@@ -1,3 +1,3 @@
-export * from "./home";
-export * from "./resource";
-export * from "./pricing";
+export * from './home';
+export * from './pricing';
+export * from './resource';

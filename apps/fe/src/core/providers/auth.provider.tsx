@@ -1,60 +1,66 @@
-"use client";
+'use client';
 
-import { getCookie } from "cookies-next";
-import { usePathname, useRouter } from "next/navigation";
-import React from "react";
-import { useAppSelector } from "@/hooks/dispatch/dispatch";
+import { usePathname, useRouter } from 'next/navigation';
+import React from 'react';
 
-import { APP_SESSION_COOKIE_KEY } from "@/configs/cookies.config";
-import { isAuthRoute, isPublicRoute } from "@/configs/routes.config";
-import { useAppDispatch } from "@/hooks/dispatch/dispatch";
-import { setCurrentUser } from "@/stores/authSlice/authSlice";
-import type { AuthSession } from "@/types/api/auth";
+import { isAuthRoute, isPublicRoute } from '@/configs/routes.config';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const dispatch = useAppDispatch();
-  const [hydrated, setHydrated] = React.useState(false);
-  const userTokens = useAppSelector(
-    (state) => state.auth.currentUser?.user.token,
-  );
+  const [loading, setLoading] = React.useState(true);
+  const [authenticated, setAuthenticated] = React.useState(false);
+  const [role, setRole] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    const token = getCookie(APP_SESSION_COOKIE_KEY);
-    if (token && !userTokens) {
-      dispatch(
-        setCurrentUser({
-          user: {
-            id: "",
-            email: "",
-            fullName: "",
-            role: "user",
-            token: String(token),
-          },
-        } satisfies AuthSession),
-      );
+    async function loadSession() {
+      try {
+        const res = await fetch('/api/auth/session', {
+          credentials: 'include',
+        });
+
+        if (!res.ok) {
+          setAuthenticated(false);
+          return;
+        }
+
+        const session = await res.json();
+
+        setAuthenticated(session.authenticated);
+        setRole(session.role ?? null);
+      } catch {
+        setAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
     }
-    setHydrated(true);
-  }, [userTokens, dispatch]);
+
+    loadSession();
+  }, []);
 
   React.useEffect(() => {
-    if (!hydrated || !pathname) return;
+    if (loading || !pathname) return;
 
-    const isAuthenticated = Boolean(userTokens);
     const onPublic = isPublicRoute(pathname);
     const onAuth = isAuthRoute(pathname);
 
-    if (!isAuthenticated && !onPublic && !onAuth) {
-      router.replace("/login");
+    if (!authenticated && !onPublic && !onAuth) {
+      router.replace('/login');
       return;
     }
-    // disini harus check role lagi
-    if (isAuthenticated && onAuth) {
-      router.replace("/home");
+
+    if (authenticated && onAuth) {
+      router.replace('/home');
+      return;
     }
-  }, [pathname, userTokens, router, hydrated]);
+
+    // TODO:
+    // cek role di sini
+    // if(role !== "admin") ...
+  }, [loading, authenticated, pathname, router, role]);
+
+  if (loading) return null;
 
   return <>{children}</>;
 }

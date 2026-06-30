@@ -1,5 +1,5 @@
-import { useSendNotification } from "./state/mutate";
-import { useNotificationLogs } from "./state/query";
+import { useSendNotification } from './state/mutate';
+import { useNotificationLogs } from './state/query';
 
 export const useNotification = () => {
   return {

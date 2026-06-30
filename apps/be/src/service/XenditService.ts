@@ -1,5 +1,5 @@
-import type { BillingCycle, SubscriptionTier } from "@repo/types/company.types";
-import { getPlan, getPlanPrice } from "@/config/subscriptionPlans";
+import type { BillingCycle, SubscriptionTier } from '@repo/types/company.types';
+import { getPlan, getPlanPrice } from '@/config/subscriptionPlans';
 
 interface XenditInvoiceResponse {
   id: string;
@@ -14,7 +14,7 @@ class XenditService {
   private getSecretKey(): string {
     const secretKey = process.env.XENDIT_SECRET_KEY;
     if (!secretKey) {
-      throw new Error("XENDIT_SECRET_KEY belum dikonfigurasi");
+      throw new Error('XENDIT_SECRET_KEY belum dikonfigurasi');
     }
     return secretKey;
   }
@@ -24,7 +24,7 @@ class XenditService {
   }
 
   private authHeader(): string {
-    return `Basic ${Buffer.from(`${this.getSecretKey()}:`).toString("base64")}`;
+    return `Basic ${Buffer.from(`${this.getSecretKey()}:`).toString('base64')}`;
   }
 
   public async createInvoice(input: {
@@ -37,19 +37,15 @@ class XenditService {
     cancelUrl: string;
   }) {
     const plan = getPlan(input.tier);
-    const { amount, currency } = getPlanPrice(
-      input.tier,
-      input.billingCycle,
-      "xendit",
-    );
+    const { amount, currency } = getPlanPrice(input.tier, input.billingCycle, 'xendit');
 
     const externalId = `mora-${input.companyId}-${Date.now()}`;
 
-    const response = await fetch("https://api.xendit.co/v2/invoices", {
-      method: "POST",
+    const response = await fetch('https://api.xendit.co/v2/invoices', {
+      method: 'POST',
       headers: {
         Authorization: this.authHeader(),
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         external_id: externalId,
@@ -67,7 +63,7 @@ class XenditService {
           companyId: input.companyId,
           tier: input.tier,
           billingCycle: input.billingCycle,
-          provider: "xendit",
+          provider: 'xendit',
         },
       }),
     });
@@ -91,7 +87,7 @@ class XenditService {
   public verifyWebhookToken(token: string | null): boolean {
     const expected = process.env.XENDIT_WEBHOOK_TOKEN;
     if (!expected) {
-      throw new Error("XENDIT_WEBHOOK_TOKEN belum dikonfigurasi");
+      throw new Error('XENDIT_WEBHOOK_TOKEN belum dikonfigurasi');
     }
 
     return token === expected;

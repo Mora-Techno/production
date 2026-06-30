@@ -1,5 +1,5 @@
-import { useCreatePlaylist, useDeletePlaylist } from "./state/mutate";
-import { usePlaylists } from "./state/query";
+import { useCreatePlaylist, useDeletePlaylist } from './state/mutate';
+import { usePlaylists } from './state/query';
 
 export const useMusic = () => {
   return {

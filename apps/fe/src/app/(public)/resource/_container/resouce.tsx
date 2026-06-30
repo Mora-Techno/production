@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import NavLayout from "@/core/layouts/nav.layout";
 // import not valid
-import ResourceHeroSection from "@/components/page/public/resource/HeroSection";
+import ResourceHeroSection from '@/components/page/public/resource/HeroSection';
+import NavLayout from '@/core/layouts/nav.layout';
 
 const ResourceContainer = () => {
   return (
@@ -10,8 +10,8 @@ const ResourceContainer = () => {
       <main className="w-full min-h-screen">
         <ResourceHeroSection
           template={{
-            desc: "Initial Resource",
-            title: "Resouce",
+            desc: 'Initial Resource',
+            title: 'Resouce',
           }}
         />
       </main>

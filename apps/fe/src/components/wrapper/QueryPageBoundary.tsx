@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 type QueryPageBoundaryProps = {
   isLoading: boolean;
@@ -13,7 +13,7 @@ type QueryPageBoundaryProps = {
 export function QueryPageBoundary({
   isLoading,
   isError = false,
-  errorMessage = "Gagal memuat data. Silakan muat ulang halaman.",
+  errorMessage = 'Gagal memuat data. Silakan muat ulang halaman.',
   skeleton,
   children,
 }: QueryPageBoundaryProps) {
