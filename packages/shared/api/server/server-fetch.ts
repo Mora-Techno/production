@@ -1,9 +1,15 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Logger } from "../../utils/log";
-import { ApiError as ApiErrorClass, type ApiSuccessResponse as ApiResponse } from "../../types/api.types";
+import {
+  ApiError as ApiErrorClass,
+  type ApiSuccessResponse as ApiResponse,
+} from "../../types/api.types";
 import { api, joinUrl, version, baseurl } from "../../config/repo.config";
-import { APP_SESSION_COOKIE_KEY, APP_SESSION_COOKIE_REFRESH } from "../../config/cookies.config";
+import {
+  APP_SESSION_COOKIE_KEY,
+  APP_SESSION_COOKIE_REFRESH,
+} from "../../config/cookies.config";
 
 const BASE_URL = baseurl;
 

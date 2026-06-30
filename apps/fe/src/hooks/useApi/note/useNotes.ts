@@ -1,16 +1,16 @@
-'use client';
+import { useCreateNote, useDeleteNote, useUpdateNote } from "./state/mutate";
+import { useNote, useNotes } from "./state/query";
 
-import { useQuery } from '@tanstack/react-query';
-
-import { queryKey } from '@/configs';
-import { Api } from '@/services/api';
-
-export function useNotes() {
-  return useQuery({
-    queryKey: queryKey.notes.list(),
-    queryFn: async () => {
-      const res = await Api.Note.list();
-      return res.data;
+export const useNotess = () => {
+  return {
+    mutate: {
+      create: useCreateNote,
+      delete: useDeleteNote,
+      update: useUpdateNote,
     },
-  });
-}
+    query: {
+      get: useNotes,
+      getByID: useNote,
+    },
+  };
+};

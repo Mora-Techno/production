@@ -111,14 +111,6 @@ export async function VerifyOtp(
 }
 
 export const AuthService = {
-  Login,
-  Register,
-  Logout,
-  RefreshToken,
-  SendMagicLink,
-  VerifyMagicLink,
-  SendOtp,
-  VerifyOtp,
   login: Login,
   register: Register,
   logout: Logout,

@@ -1,11 +1,7 @@
-'use client';
-
-import { useQuery } from '@tanstack/react-query';
-
-import { Api } from '@/services/api';
-import type { NotificationLogQuery } from '@/types/api/productivity';
-
-import { notificationLogsKey } from './notification.cache';
+import { NotificationLogQuery } from "@repo/types";
+import { useQuery } from "@tanstack/react-query";
+import { notificationLogsKey } from "./utils";
+import Api from "@/services/api";
 
 export function useNotificationLogs(query?: NotificationLogQuery) {
   return useQuery({

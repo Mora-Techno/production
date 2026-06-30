@@ -1,9 +1,6 @@
-'use client';
-
-import { useQuery } from '@tanstack/react-query';
-
-import { queryKey } from '@/configs';
-import { Api } from '@/services/api';
+import { useQuery } from "@tanstack/react-query";
+import { queryKey } from "@/configs";
+import Api from "@repo/services";
 
 export function usePlaylists() {
   return useQuery({

@@ -2,10 +2,7 @@ import {
   MUSIC_ENDPOINTS,
   musicPlaylistById,
 } from "../endpoints/music.endpoints";
-import type {
-  MusicPlaylist,
-  PickCreatePlaylist,
-} from "../types/music.types";
+import type { MusicPlaylist, PickCreatePlaylist } from "../types/music.types";
 import type { TResponse } from "../types/response.types";
 import { DeleteResponse, GetResponse, PostResponse } from "./http";
 import { toServiceResponse } from "./service-response";
@@ -38,9 +35,6 @@ export async function DeletePlaylist(
 }
 
 export const MusicService = {
-  ListPlaylists,
-  CreatePlaylist,
-  DeletePlaylist,
   list: ListPlaylists,
   create: CreatePlaylist,
   remove: DeletePlaylist,

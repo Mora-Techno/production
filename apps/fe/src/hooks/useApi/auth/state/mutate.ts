@@ -1,7 +1,7 @@
 import { useAppNameSpace } from "@/hooks/useAppNameSpace";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import Api from "@repo/services";
+import Api from "@/services/api";
 import { PickLogin, PickRegister } from "@repo/types";
 
 export function useLogin() {

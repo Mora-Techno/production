@@ -1,19 +1,22 @@
-import { NOTIFICATION_ENDPOINTS } from '../endpoints/notification.endpoints';
+import { NOTIFICATION_ENDPOINTS } from "../endpoints/notification.endpoints";
 import type {
   NotificationLog,
   NotificationLogQuery,
   PickSendNotification,
-} from '../types/notification.types';
-import type { TResponse } from '../types/response.types';
-import { GetResponse, PostResponse, withQuery } from './http';
-import { toServiceResponse } from './service-response';
+} from "../types/notification.types";
+import type { TResponse } from "../types/response.types";
+import { GetResponse, PostResponse, withQuery } from "./http";
+import { toServiceResponse } from "./service-response";
 
 export async function SendNotification(
   payload: PickSendNotification,
 ): Promise<TResponse<NotificationLog>> {
-  const res = await PostResponse<NotificationLog>(NOTIFICATION_ENDPOINTS.SEND, payload);
+  const res = await PostResponse<NotificationLog>(
+    NOTIFICATION_ENDPOINTS.SEND,
+    payload,
+  );
   return toServiceResponse(res, {
-    message: 'Notifikasi berhasil dikirim',
+    message: "Notifikasi berhasil dikirim",
     statusCode: 201,
   });
 }
@@ -21,15 +24,15 @@ export async function SendNotification(
 export async function ListNotificationLogs(
   query?: NotificationLogQuery,
 ): Promise<TResponse<NotificationLog[]>> {
-  const res = await GetResponse<NotificationLog[]>(withQuery(NOTIFICATION_ENDPOINTS.LOGS, query));
+  const res = await GetResponse<NotificationLog[]>(
+    withQuery(NOTIFICATION_ENDPOINTS.LOGS, query),
+  );
   return toServiceResponse(res, {
-    message: 'Riwayat notifikasi berhasil diambil',
+    message: "Riwayat notifikasi berhasil diambil",
   });
 }
 
 export const NotificationService = {
-  SendNotification,
-  ListNotificationLogs,
   send: SendNotification,
   listLogs: ListNotificationLogs,
 };
