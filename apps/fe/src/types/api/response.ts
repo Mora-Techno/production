@@ -1,4 +1,4 @@
-import type { ApiSuccessResponse } from "@repo/types";
+import type { ApiSuccessResponse } from '@repo/types';
 
 export type TResponse<T = unknown> = ApiSuccessResponse<T>;
 

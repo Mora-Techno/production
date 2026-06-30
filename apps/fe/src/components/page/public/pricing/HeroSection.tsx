@@ -1,4 +1,4 @@
-import { GhibliEmptyState } from "@/components/molecules";
+import { GhibliEmptyState } from '@/components/molecules';
 
 interface PricingSectionSection {
   template: {
@@ -8,9 +8,7 @@ interface PricingSectionSection {
 }
 
 const PricingSection: React.FC<PricingSectionSection> = ({ template }) => {
-  return (
-    <GhibliEmptyState description={template.desc} title={template.title} />
-  );
+  return <GhibliEmptyState description={template.desc} title={template.title} />;
 };
 
 export default PricingSection;

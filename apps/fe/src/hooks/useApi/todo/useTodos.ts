@@ -1,5 +1,5 @@
-import { useCreateTodo, useDeleteTodo, useUpdateTodo } from "./state/mutate";
-import { todosListKey } from "./state/utils";
+import { useCreateTodo, useDeleteTodo, useUpdateTodo } from './state/mutate';
+import { todosListKey } from './state/utils';
 
 export const useTodo = () => {
   return {

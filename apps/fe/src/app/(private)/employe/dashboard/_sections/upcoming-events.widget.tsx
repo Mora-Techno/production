@@ -1,27 +1,24 @@
-"use client";
+'use client';
 
-import { format } from "date-fns";
-import { id as idLocale } from "date-fns/locale";
-import { ArrowRight, CalendarDays } from "lucide-react";
-import Link from "next/link";
+import { format } from 'date-fns';
+import { id as idLocale } from 'date-fns/locale';
+import { ArrowRight, CalendarDays } from 'lucide-react';
+import Link from 'next/link';
 
-import { Button } from "@/components/atoms";
-import { GhibliCard } from "@/components/molecules/ghibli-card";
-import { GhibliEmptyState } from "@/components/template/ghibli-empty-state";
-import { useEvents } from "@/hooks/useApi/calendar";
+import { Button } from '@/components/atoms';
+import { GhibliCard } from '@/components/molecules/ghibli-card';
+import { GhibliEmptyState } from '@/components/template/ghibli-empty-state';
+import { useEvents } from '@/hooks/useApi/calendar';
 
 export function UpcomingEventsWidget() {
   const now = new Date();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const month = String(now.getMonth() + 1).padStart(2, '0');
   const year = String(now.getFullYear());
   const { data: events = [], isLoading } = useEvents({ month, year });
 
   const upcoming = events
     .filter((e) => new Date(e.startDate) >= now)
-    .sort(
-      (a, b) =>
-        new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
-    )
+    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
     .slice(0, 3);
 
   return (
@@ -59,7 +56,7 @@ export function UpcomingEventsWidget() {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">{event.title}</p>
                 <p className="text-xs text-muted-foreground">
-                  {format(new Date(event.startDate), "EEEE, d MMM · HH:mm", {
+                  {format(new Date(event.startDate), 'EEEE, d MMM · HH:mm', {
                     locale: idLocale,
                   })}
                 </p>

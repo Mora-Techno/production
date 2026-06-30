@@ -1,16 +1,16 @@
-import { readTodoSnapshot, TodoCacheContext } from "./utils";
-import { useMutation } from "@tanstack/react-query";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
-import type { TResponse } from "@/types/api/response";
-import { Todo, PickCreateTodo, PickUpdateTodo } from "@repo/types";
-import Api from "@/services/api";
-import { todoRootKey } from "./utils";
-import { queryKey } from "@/configs";
-import { PickApiID } from "@repo/types/api.types";
+import { PickCreateTodo, PickUpdateTodo, Todo } from '@repo/types';
+import { PickApiID } from '@repo/types/api.types';
+import { useMutation } from '@tanstack/react-query';
 
-export function useCreateTodo(
-  filters?: Parameters<typeof readTodoSnapshot>[1],
-) {
+import { queryKey } from '@/configs';
+import { useAppNameSpace } from '@/hooks/useAppNameSpace';
+import Api from '@/services/api';
+import type { TResponse } from '@/types/api/response';
+
+import { readTodoSnapshot, TodoCacheContext } from './utils';
+import { todoRootKey } from './utils';
+
+export function useCreateTodo(filters?: Parameters<typeof readTodoSnapshot>[1]) {
   const ns = useAppNameSpace();
 
   return useMutation<TResponse<Todo>, Error, PickCreateTodo, TodoCacheContext>({
@@ -23,7 +23,7 @@ export function useCreateTodo(
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
     },
     onSettled: async () => {
@@ -33,15 +33,12 @@ export function useCreateTodo(
     },
     onError: (err, _variables, context) => {
       if (context?.previousData !== undefined) {
-        ns.queryClient.setQueryData(
-          queryKey.todos.list(filters),
-          context.previousData,
-        );
+        ns.queryClient.setQueryData(queryKey.todos.list(filters), context.previousData);
       }
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -60,7 +57,7 @@ export function useDeleteTodo() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
     },
     onSettled: async () => {
@@ -75,7 +72,7 @@ export function useDeleteTodo() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -99,7 +96,7 @@ export function useUpdateTodo() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
     },
     onSettled: async () => {
@@ -114,7 +111,7 @@ export function useUpdateTodo() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });

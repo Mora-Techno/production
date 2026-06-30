@@ -1,4 +1,4 @@
-import { GhibliEmptyState } from "@/components/molecules";
+import { GhibliEmptyState } from '@/components/molecules';
 interface BlogSectionProps {
   template: {
     title: string;

@@ -1,11 +1,11 @@
-import { randomBytes } from "node:crypto";
-import type { CompanyRole } from "@repo/types/company.types";
-import { AuthTokensResponse, SafeAuthUser } from "@repo/types/auth.types";
-import { JwtPayload } from "@repo/types/auth.types";
-import jwt from "jsonwebtoken";
-import { getJwtSecret } from "./jwt.utils";
-import prisma from "prisma/client";
-import bcryptjs from "bcryptjs";
+import { randomBytes } from 'node:crypto';
+import type { CompanyRole } from '@repo/types/company.types';
+import { AuthTokensResponse, SafeAuthUser } from '@repo/types/auth.types';
+import { JwtPayload } from '@repo/types/auth.types';
+import jwt from 'jsonwebtoken';
+import { getJwtSecret } from './jwt.utils';
+import prisma from 'prisma/client';
+import bcryptjs from 'bcryptjs';
 
 const OTP_EXPIRY_MINUTES = 5;
 const MAGIC_LINK_EXPIRY_MINUTES = 15;
@@ -16,7 +16,7 @@ export function generateOtp(): string {
 }
 
 export function generateSecureToken(): string {
-  return randomBytes(32).toString("hex");
+  return randomBytes(32).toString('hex');
 }
 
 export function getOtpExpiry(): Date {
@@ -38,7 +38,7 @@ export function getRefreshTokenExpiry(): Date {
 }
 
 export const AUTH_EXPIRY = {
-  accessToken: "15m",
+  accessToken: '15m',
   refreshTokenDays: REFRESH_TOKEN_EXPIRY_DAYS,
   otpMinutes: OTP_EXPIRY_MINUTES,
   magicLinkMinutes: MAGIC_LINK_EXPIRY_MINUTES,
@@ -77,9 +77,7 @@ export function signAccessToken(payload: JwtPayload): string {
   });
 }
 
-export async function createTokenPair(
-  user: SafeAuthUser,
-): Promise<AuthTokensResponse> {
+export async function createTokenPair(user: SafeAuthUser): Promise<AuthTokensResponse> {
   const payload = buildPayload(user);
   const accessToken = signAccessToken(payload);
   const refreshToken = generateSecureToken();

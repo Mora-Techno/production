@@ -1,13 +1,10 @@
-import NotificationService from "@/service/NotificationService";
-import { HttpResponse } from "@/http";
-import type { AppContext } from "@/contex";
-import type {
-  NotificationLogQuery,
-  PickSendNotification,
-} from "@repo/types/notification.types";
-import { JwtPayload } from "@repo/types/auth.types";
-import { unauthorizedValidate } from "@/validation/auth.validate";
-import { SendNotifValidation } from "@/validation/notification.validate";
+import NotificationService from '@/service/NotificationService';
+import { HttpResponse } from '@/http';
+import type { AppContext } from '@/contex';
+import type { NotificationLogQuery, PickSendNotification } from '@repo/types/notification.types';
+import { JwtPayload } from '@repo/types/auth.types';
+import { unauthorizedValidate } from '@/validation/auth.validate';
+import { SendNotifValidation } from '@/validation/notification.validate';
 
 class NotificationController {
   public async send(c: AppContext) {
@@ -26,7 +23,7 @@ class NotificationController {
         return HttpResponse(c).badRequest();
       }
 
-      return HttpResponse(c).ok(data, "Email berhasil dikirim");
+      return HttpResponse(c).ok(data, 'Email berhasil dikirim');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -40,10 +37,10 @@ class NotificationController {
       if (authRespone) return authRespone;
 
       const data = await NotificationService.listLogs({
-        status: c.query.status as NotificationLogQuery["status"],
+        status: c.query.status as NotificationLogQuery['status'],
         limit: c.query.limit ? Number(c.query.limit) : undefined,
       });
-      return HttpResponse(c).ok(data, "Berhasil mengambil riwayat notifikasi");
+      return HttpResponse(c).ok(data, 'Berhasil mengambil riwayat notifikasi');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

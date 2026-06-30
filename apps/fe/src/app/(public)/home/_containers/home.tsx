@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import NavLayout from "@/core/layouts/nav.layout";
 import {
-  HeroSection,
   CtaSection,
   FeaturesSection,
+  HeroSection,
   ShowcaseSection,
   StatsSection,
-} from "@/components/page/public";
+} from '@/components/page/public';
+import NavLayout from '@/core/layouts/nav.layout';
 export default function ContainerHome() {
   return (
     <NavLayout>

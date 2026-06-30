@@ -25,8 +25,10 @@
     "mobile": "cd apps/mobile && bun run dev",
     "mobile:clear": "cd apps/mobile && bun x expo start -c",
     "lint": "./scripts/ci-lint.sh",
+    "lint:fix": "./scripts/ci-lint.sh --fix",
     "format": "bunx biome format --write apps/fe apps/be apps/mobile packages/shared",
     "format:check": "./scripts/ci-format.sh",
-    "ci": "./scripts/ci-quality.sh"
+    "ci": "./scripts/ci-quality.sh",
+    "ci:fix": "./scripts/ci-quality.sh --fix"
   }
 }

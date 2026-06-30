@@ -1,10 +1,10 @@
-import prisma from "prisma/client";
-import type { PickCreatePlaylist } from "@repo/types/music.types";
+import prisma from 'prisma/client';
+import type { PickCreatePlaylist } from '@repo/types/music.types';
 
 class MusicService {
   public async list() {
     return prisma.musicPlaylist.findMany({
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
   }
 

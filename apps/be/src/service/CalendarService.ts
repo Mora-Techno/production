@@ -1,9 +1,5 @@
-import prisma from "prisma/client";
-import type {
-  PickCreateEvent,
-  EventQuery,
-  PickUpdateEvent,
-} from "@repo/types/calendar.types";
+import prisma from 'prisma/client';
+import type { PickCreateEvent, EventQuery, PickUpdateEvent } from '@repo/types/calendar.types';
 
 class CalendarService {
   public async list(query: EventQuery) {
@@ -19,7 +15,7 @@ class CalendarService {
 
     return prisma.calendarEvent.findMany({
       where,
-      orderBy: { startDate: "asc" },
+      orderBy: { startDate: 'asc' },
     });
   }
 

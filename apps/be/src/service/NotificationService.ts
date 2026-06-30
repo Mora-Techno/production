@@ -1,10 +1,7 @@
-import nodemailer from "nodemailer";
-import type { NotificationStatus } from "@prisma/client";
-import prisma from "prisma/client";
-import type {
-  NotificationLogQuery,
-  PickSendNotification,
-} from "@repo/types/notification.types";
+import nodemailer from 'nodemailer';
+import type { NotificationStatus } from '@prisma/client';
+import prisma from 'prisma/client';
+import type { NotificationLogQuery, PickSendNotification } from '@repo/types/notification.types';
 
 class NotificationService {
   private createTransporter() {
@@ -12,10 +9,10 @@ class NotificationService {
     const port = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : 587;
     const user = process.env.SMTP_USER;
     const pass = process.env.SMTP_PASS;
-    const secure = process.env.SMTP_SECURE === "true";
+    const secure = process.env.SMTP_SECURE === 'true';
 
     if (!host || !user || !pass) {
-      throw new Error("Konfigurasi SMTP belum lengkap");
+      throw new Error('Konfigurasi SMTP belum lengkap');
     }
 
     return nodemailer.createTransport({
@@ -27,7 +24,7 @@ class NotificationService {
   }
 
   public async send(input: PickSendNotification) {
-    let status: NotificationStatus = "success";
+    let status: NotificationStatus = 'success';
     let errorMessage: string | null = null;
 
     try {
@@ -37,12 +34,11 @@ class NotificationService {
         to: input.recipient,
         subject: input.subject,
         text: input.body,
-        html: `<p>${input.body.replace(/\n/g, "<br>")}</p>`,
+        html: `<p>${input.body.replace(/\n/g, '<br>')}</p>`,
       });
     } catch (error) {
-      status = "failed";
-      errorMessage =
-        error instanceof Error ? error.message : "Gagal mengirim email";
+      status = 'failed';
+      errorMessage = error instanceof Error ? error.message : 'Gagal mengirim email';
     }
 
     const log = await prisma.notificationLog.create({
@@ -55,8 +51,8 @@ class NotificationService {
       },
     });
 
-    if (status === "failed") {
-      throw new Error(errorMessage ?? "Gagal mengirim email");
+    if (status === 'failed') {
+      throw new Error(errorMessage ?? 'Gagal mengirim email');
     }
 
     return log;
@@ -67,7 +63,7 @@ class NotificationService {
 
     return prisma.notificationLog.findMany({
       where: query.status ? { status: query.status } : undefined,
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
       take: limit,
     });
   }

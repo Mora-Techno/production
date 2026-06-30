@@ -1,6 +1,7 @@
-import { RegisterProps } from "@/types/ui";
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
+import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+
+import { RegisterProps } from '@/types/ui';
 
 const RegisterCard: React.FC<RegisterProps> = ({ href, icon: Icon, title }) => {
   return (

@@ -1,13 +1,15 @@
-import { cookies } from "next/headers";
-import { env } from "@/configs";
-import { api, joinUrl, version } from "@repo/config/repo.config";
 import {
   APP_SESSION_COOKIE_KEY,
   APP_SESSION_COOKIE_REFRESH,
   AUTH_COOKIE_MAX_AGE,
-} from "@repo/config/cookies.config";
-import { saveTokens, type AuthTokens } from "./auth-cookie";
-import type { ApiSuccessResponse } from "@repo/types/api.types";
+} from '@repo/config/cookies.config';
+import { api, joinUrl, version } from '@repo/config/repo.config';
+import type { ApiSuccessResponse } from '@repo/types/api.types';
+import { cookies } from 'next/headers';
+
+import { env } from '@/configs';
+
+import { type AuthTokens, saveTokens } from './auth-cookie';
 
 const COOKIE_KEYS = {
   accessToken: APP_SESSION_COOKIE_KEY,
@@ -24,13 +26,9 @@ type RefreshPayload = {
   };
 };
 
-export type RefreshAuthSessionResult =
-  | { ok: true; tokens: AuthTokens }
-  | { ok: false };
+export type RefreshAuthSessionResult = { ok: true; tokens: AuthTokens } | { ok: false };
 
-function extractRefreshPayload(
-  payload?: RefreshPayload | null,
-): AuthTokens | null {
+function extractRefreshPayload(payload?: RefreshPayload | null): AuthTokens | null {
   const accessToken = payload?.tokens?.accessToken;
   const refreshToken = payload?.tokens?.refreshToken;
 
@@ -45,26 +43,24 @@ function extractRefreshPayload(
   };
 }
 
-export async function refreshAuthSession(
-  refreshToken: string,
-): Promise<RefreshAuthSessionResult> {
-  const baseUrl = env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:5000";
+export async function refreshAuthSession(refreshToken: string): Promise<RefreshAuthSessionResult> {
+  const baseUrl = env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:5000';
   const internalApiKey =
     env.NEXT_INTERNAL_API_SECRET ||
     process.env.INTERNAL_API_SECRET ||
     process.env.INTERNAL_API_KEY ||
-    "";
+    '';
 
   let response: Response;
   try {
     response = await fetch(`${joinUrl(baseUrl, api, version)}/auth/refresh`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "x-internal-api-key": internalApiKey,
+        'Content-Type': 'application/json',
+        'x-internal-api-key': internalApiKey,
       },
       body: JSON.stringify({ refreshToken }),
-      cache: "no-store",
+      cache: 'no-store',
     });
   } catch {
     return { ok: false };
@@ -101,9 +97,7 @@ export async function hasAccessToken(): Promise<boolean> {
   return Boolean(store.get(COOKIE_KEYS.accessToken)?.value);
 }
 
-export async function ensureAuthenticatedSession(
-  refreshTokenOverride?: string,
-): Promise<boolean> {
+export async function ensureAuthenticatedSession(refreshTokenOverride?: string): Promise<boolean> {
   if (await hasAccessToken()) {
     return true;
   }

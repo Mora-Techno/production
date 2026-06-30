@@ -1,8 +1,9 @@
-"use client";
-import { useState } from "react";
-import AppFooter from "../components/app-footer";
-import AppHeader from "../components/app-header";
-import { usePathname } from "next/navigation";
+'use client';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+
+import AppFooter from '../components/app-footer';
+import AppHeader from '../components/app-header';
 
 export default function NavLayout({ children }: { children: React.ReactNode }) {
   const [isScrolled, setIsScrolled] = useState<boolean>(false);

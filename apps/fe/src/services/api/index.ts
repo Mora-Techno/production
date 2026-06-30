@@ -9,9 +9,9 @@ import {
   SubscriptionService,
   TodoService,
   WorkstationService,
-} from "@repo/services";
+} from '@repo/services';
 
-export const Api = {
+const Api = {
   Auth: AuthService,
   Todo: TodoService,
   Note: NoteService,
@@ -23,3 +23,5 @@ export const Api = {
   Workstation: WorkstationService,
   Subscription: SubscriptionService,
 };
+
+export default Api;

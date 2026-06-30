@@ -1,11 +1,11 @@
-import { Search, Sparkles } from "lucide-react";
-import Link from "next/link";
+import { Search, Sparkles } from 'lucide-react';
+import Link from 'next/link';
 
-import { Button } from "@/components/atoms";
-import { Badge } from "@/components/atoms";
-import { useGsapStagger } from "@/hooks/useGsapStagger";
+import { Button } from '@/components/atoms';
+import { Badge } from '@/components/atoms';
+import { useGsapStagger } from '@/hooks/useGsapStagger';
 
-const TAGS = ["Produktivitas", "Todo", "Notes", "Kalender", "Musik Fokus"];
+const TAGS = ['Produktivitas', 'Todo', 'Notes', 'Kalender', 'Musik Fokus'];
 
 export function HeroSection() {
   const ref = useGsapStagger<HTMLDivElement>([]);
@@ -29,7 +29,7 @@ export function HeroSection() {
           data-stagger-item
           className="font-serif text-4xl font-bold leading-tight tracking-tight md:text-6xl  lg:text-7xl"
         >
-          Jelajahi Masa Depan{" "}
+          Jelajahi Masa Depan{' '}
           <span className="bg-gradient-to-r from-primary via-primary/60 to-secondary bg-clip-text text-transparent">
             Produktivitas Digital
           </span>
@@ -39,9 +39,8 @@ export function HeroSection() {
           data-stagger-item
           className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-zinc-400 md:text-lg"
         >
-          Kelola tugas, catatan, kalender, dan musik fokus dalam satu PWA yang
-          elegan. Dibangun untuk pekerja modern yang menginginkan alur kerja
-          yang tenang namun powerful.
+          Kelola tugas, catatan, kalender, dan musik fokus dalam satu PWA yang elegan. Dibangun
+          untuk pekerja modern yang menginginkan alur kerja yang tenang namun powerful.
         </p>
 
         <div
@@ -62,10 +61,7 @@ export function HeroSection() {
           </Button>
         </div>
 
-        <div
-          data-stagger-item
-          className="mt-8 flex flex-wrap items-center justify-center gap-2"
-        >
+        <div data-stagger-item className="mt-8 flex flex-wrap items-center justify-center gap-2">
           {TAGS.map((tag) => (
             <span
               key={tag}

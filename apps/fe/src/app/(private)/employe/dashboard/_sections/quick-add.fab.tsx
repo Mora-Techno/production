@@ -1,52 +1,49 @@
-"use client";
+'use client';
 
-import { CheckSquare, FileText, Plus } from "lucide-react";
-import { useState } from "react";
+import { CheckSquare, FileText, Plus } from 'lucide-react';
+import { useState } from 'react';
 
-import { Button } from "@/components/atoms";
+import { Button } from '@/components/atoms';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/atoms/dialog";
+} from '@/components/atoms/dialog';
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/atoms/sheet";
-import { useCreateNote } from "@/hooks/useApi/note";
-import { useCreateTodo } from "@/hooks/useApi/todo";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { cn } from "@/utils/classname";
+} from '@/components/atoms/sheet';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { useCreateNote } from '@/hooks/useApi/note';
+import { useCreateTodo } from '@/hooks/useApi/todo';
+import { cn } from '@/utils/classname';
 
 function QuickAddForm() {
-  const [mode, setMode] = useState<"todo" | "note">("todo");
-  const [todoText, setTodoText] = useState("");
-  const [noteTitle, setNoteTitle] = useState("");
-  const [noteContent, setNoteContent] = useState("");
+  const [mode, setMode] = useState<'todo' | 'note'>('todo');
+  const [todoText, setTodoText] = useState('');
+  const [noteTitle, setNoteTitle] = useState('');
+  const [noteContent, setNoteContent] = useState('');
   const createTodo = useCreateTodo();
   const createNote = useCreateNote();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (mode === "todo" && todoText.trim()) {
-      createTodo.mutate(
-        { text: todoText.trim() },
-        { onSuccess: () => setTodoText("") },
-      );
+    if (mode === 'todo' && todoText.trim()) {
+      createTodo.mutate({ text: todoText.trim() }, { onSuccess: () => setTodoText('') });
       return;
     }
-    if (mode === "note" && noteTitle.trim() && noteContent.trim()) {
+    if (mode === 'note' && noteTitle.trim() && noteContent.trim()) {
       createNote.mutate(
         { title: noteTitle.trim(), content: noteContent.trim() },
         {
           onSuccess: () => {
-            setNoteTitle("");
-            setNoteContent("");
+            setNoteTitle('');
+            setNoteContent('');
           },
         },
       );
@@ -58,25 +55,25 @@ function QuickAddForm() {
       <div className="flex gap-2">
         <Button
           type="button"
-          variant={mode === "todo" ? "default" : "outline"}
+          variant={mode === 'todo' ? 'default' : 'outline'}
           size="sm"
           className="ghibli-btn flex-1"
-          onClick={() => setMode("todo")}
+          onClick={() => setMode('todo')}
         >
           <CheckSquare className="size-4" /> Todo
         </Button>
         <Button
           type="button"
-          variant={mode === "note" ? "default" : "outline"}
+          variant={mode === 'note' ? 'default' : 'outline'}
           size="sm"
           className="ghibli-btn flex-1"
-          onClick={() => setMode("note")}
+          onClick={() => setMode('note')}
         >
           <FileText className="size-4" /> Note
         </Button>
       </div>
 
-      {mode === "todo" ? (
+      {mode === 'todo' ? (
         <input
           value={todoText}
           onChange={(e) => setTodoText(e.target.value)}
@@ -114,7 +111,7 @@ function QuickAddForm() {
 
 export function QuickAddFab() {
   const isMobile = useIsMobile();
-  const title = "Tambah Cepat";
+  const title = 'Tambah Cepat';
 
   if (isMobile) {
     return (
@@ -123,7 +120,7 @@ export function QuickAddFab() {
           <Button
             size="icon"
             className={cn(
-              "ghibli-btn fixed right-4 bottom-20 z-40 size-14 rounded-full shadow-lg md:hidden",
+              'ghibli-btn fixed right-4 bottom-20 z-40 size-14 rounded-full shadow-lg md:hidden',
             )}
           >
             <Plus className="size-6" />

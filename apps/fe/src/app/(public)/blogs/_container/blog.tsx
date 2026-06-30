@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import BlogSection from "@/components/page/public/blog/HeroSection";
-import NavLayout from "@/core/layouts/nav.layout";
+import BlogSection from '@/components/page/public/blog/HeroSection';
+import NavLayout from '@/core/layouts/nav.layout';
 
 const BlogsContainer = () => {
   return (
@@ -9,8 +9,8 @@ const BlogsContainer = () => {
       <main className="w-full min-h-screen">
         <BlogSection
           template={{
-            desc: "Initial Blogs",
-            title: "Blogs",
+            desc: 'Initial Blogs',
+            title: 'Blogs',
           }}
         />
       </main>

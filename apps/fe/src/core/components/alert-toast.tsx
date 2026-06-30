@@ -1,49 +1,43 @@
-import { useRef } from 'react';
-import toast from 'react-hot-toast';
+import { gooeyToast } from '@/components/atoms/goey-toaster';
+import type { ToastProps } from '@/types/ui';
 
-import { ToastProps } from '@/types/ui';
+const TOAST_DURATION = 4000;
 
-const iconMap: Record<string, { emoji: string; color: string }> = {
-  success: {
-    emoji: '✅',
-    color: 'border-green-500 text-green-600 bg-background',
-  },
-  error: { emoji: '❌', color: 'border-red-500 text-red-600 bg-background' },
-  warning: {
-    emoji: '⚠️',
-    color: 'border-yellow-500 text-yellow-600 bg-background',
-  },
-  info: { emoji: 'ℹ️', color: 'border-blue-500 text-blue-600 bg-background' },
-  question: {
-    emoji: '❓',
-    color: 'border-purple-500 text-purple-600 bg-background',
-  },
-};
+export function showAlertToast({ title, message, icon, onVoid, action, duration }: ToastProps) {
+  const content = title || message;
+  const description = message && message !== title ? message : undefined;
 
-export const ToastEffect = ({ t, title, message, icon, onVoid }: ToastProps & { t: any }) => {
-  const Run = useRef(false);
+  const options = {
+    description,
+    duration: duration ?? TOAST_DURATION,
+    onDismiss: onVoid ? () => onVoid() : undefined,
+    ...(action
+      ? {
+          action: {
+            label: action.label,
+            onClick: action.onClick,
+            successLabel: action.successLabel,
+          },
+        }
+      : {}),
+  };
 
-  if (t.visible && !Run.current) {
-    Run.current = true;
-    setTimeout(() => {
-      onVoid?.();
-      toast.dismiss(t.id);
-    }, 2000);
+  switch (icon) {
+    case 'success':
+      gooeyToast.success(content, options);
+      break;
+    case 'error':
+      gooeyToast.error(content, options);
+      break;
+    case 'warning':
+      gooeyToast.warning(content, options);
+      break;
+    case 'question':
+      gooeyToast(content, options);
+      break;
+    case 'info':
+    default:
+      gooeyToast.info(content, options);
+      break;
   }
-
-  const iconData = iconMap[icon || 'info'];
-
-  return (
-    <div
-      className={`w-[90%] max-w-sm p-4 rounded-2xl border shadow-lg transition-all duration-300 transform ${
-        t.visible ? 'animate-enter scale-100 opacity-100' : 'animate-leave scale-90 opacity-0'
-      } ${iconData?.color || 'border-background bg-background text-foreground'}`}
-    >
-      <div className="flex flex-col items-center text-center space-y-1">
-        <div className="text-4xl animate-pulse">{iconData?.emoji}</div>
-        <p className="text-base font-semibold tracking-wide">{title}</p>
-        <p className="text-sm">{message}</p>
-      </div>
-    </div>
-  );
-};
+}

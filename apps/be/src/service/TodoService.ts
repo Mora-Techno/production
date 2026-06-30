@@ -1,10 +1,6 @@
-import type { TodoStatus } from "@prisma/client";
-import prisma from "prisma/client";
-import type {
-  PickCreateTodo,
-  PickUpdateTodo,
-  TodoQuery,
-} from "@repo/types/todo.types";
+import type { TodoStatus } from '@prisma/client';
+import prisma from 'prisma/client';
+import type { PickCreateTodo, PickUpdateTodo, TodoQuery } from '@repo/types/todo.types';
 
 class TodoService {
   public async list(query: TodoQuery) {
@@ -17,7 +13,7 @@ class TodoService {
       where.status = query.status;
     }
 
-    if (query.date === "today") {
+    if (query.date === 'today') {
       const start = new Date();
       start.setHours(0, 0, 0, 0);
       const end = new Date(start);
@@ -27,7 +23,7 @@ class TodoService {
 
     return prisma.todo.findMany({
       where,
-      orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+      orderBy: [{ status: 'asc' }, { createdAt: 'desc' }],
     });
   }
 

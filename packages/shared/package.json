@@ -12,7 +12,10 @@
     "./types": "./types/index.ts",
     "./types/*": "./types/*.ts",
     "./services": "./services/index.ts",
+    "./services/server": "./services/http.server.ts",
     "./services/*": "./services/*.ts",
+    "./api/client": "./api/client/index.ts",
+    "./api/server": "./api/server/api.ts",
     "./utils/api": "./utils/api.ts",
     "./react-query/query-client": "./react-query/query-client.tsx",
     "./react-query/mutation-wrapper": "./react-query/mutation-wrapper.ts",
@@ -28,15 +31,27 @@
     "format:check": "biome format ."
   },
   "peerDependencies": {
+    "next": ">=14.0.0",
     "react": "^19.1.0",
     "@tanstack/react-query": "^5.90.21",
+    "server-only": "^0.0.1",
     "zod": "^3.0.0 || ^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    },
+    "server-only": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/react": "^19.1.0",
+    "next": "^16.2.7",
     "react": "^19.1.0",
     "@tanstack/react-query": "^5.90.21",
+    "server-only": "^0.0.1",
     "zod": "^3.25.76"
   }
 }

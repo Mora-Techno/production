@@ -1,8 +1,9 @@
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import Api from "@/services/api";
-import { PickLogin, PickRegister } from "@repo/types";
+import { PickLogin, PickRegister } from '@repo/types';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+
+import { useAppNameSpace } from '@/hooks/useAppNameSpace';
+import Api from '@/services/api';
 
 export function useLogin() {
   const ns = useAppNameSpace();
@@ -15,15 +16,15 @@ export function useLogin() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
-      router.replace("/");
+      router.replace('/');
     },
     onError: (err: Error) => {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -39,23 +40,23 @@ export function useLogout() {
       } catch {
         // Tetap logout lokal meski BE gagal
       }
-      await fetch("/api/session/delete", { method: "POST" });
+      await fetch('/api/session/delete', { method: 'POST' });
     },
     onSuccess: () => {
       ns.alert.toast({
-        title: "Logout berhasil",
-        message: "Sampai jumpa lagi!",
-        icon: "success",
+        title: 'Logout berhasil',
+        message: 'Sampai jumpa lagi!',
+        icon: 'success',
       });
-      router.replace("/login");
+      router.replace('/login');
     },
     onError: (err: Error) => {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
-      router.replace("/login");
+      router.replace('/login');
     },
   });
 }
@@ -70,15 +71,15 @@ export function useRegister() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
-      router.replace("/");
+      router.replace('/');
     },
     onError: (err: Error) => {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });

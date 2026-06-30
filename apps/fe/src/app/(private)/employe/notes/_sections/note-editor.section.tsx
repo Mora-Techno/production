@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
-import { Button } from "@/components/atoms";
-import { Skeleton } from "@/components/atoms/skeleton";
-import { GhibliCard } from "@/components/molecules/ghibli-card";
-import { useNote, useUpdateNote } from "@/hooks/useApi/note";
+import { Button } from '@/components/atoms';
+import { Skeleton } from '@/components/atoms/skeleton';
+import { GhibliCard } from '@/components/molecules/ghibli-card';
+import { useNote, useUpdateNote } from '@/hooks/useApi/note';
 
 export function NoteEditorSection({ noteId }: { noteId: string }) {
   const { data: note, isLoading } = useNote(noteId);
   const updateNote = useUpdateNote();
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
 
   useEffect(() => {
     if (note) {
@@ -60,11 +60,7 @@ export function NoteEditorSection({ noteId }: { noteId: string }) {
         placeholder="Tulis catatanmu di sini..."
       />
       <div className="flex justify-end">
-        <Button
-          onClick={handleSave}
-          disabled={updateNote.isPending}
-          className="ghibli-btn"
-        >
+        <Button onClick={handleSave} disabled={updateNote.isPending} className="ghibli-btn">
           Simpan Perubahan
         </Button>
       </div>

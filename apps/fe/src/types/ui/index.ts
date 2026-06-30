@@ -1,4 +1,10 @@
-type ToastType = "success" | "error" | "warning" | "info" | "question";
+type ToastType = 'success' | 'error' | 'warning' | 'info' | 'question';
+
+export interface ToastActionProps {
+  label: string;
+  onClick: () => void;
+  successLabel?: string;
+}
 export interface ModalProps {
   title: string;
   icon: ToastType;
@@ -13,9 +19,10 @@ export interface ToastProps {
   title: string;
   icon?: ToastType;
   message: string;
+  duration?: number;
+  action?: ToastActionProps;
   onVoid?: () => void;
 }
-
 export interface AlertContexType {
   toast: (p: ToastProps) => void;
   modal: (p: ModalProps) => void;

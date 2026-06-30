@@ -7,11 +7,11 @@ export interface INote {
   updatedAt: Date;
 }
 
-export type Note = Pick<INote, "id" | "title" | "content"> & {
+export type Note = Pick<INote, 'id' | 'title' | 'content'> & {
   createdAt: string;
   updatedAt: string;
 };
 
-export type PickCreateNote = Pick<INote, "title" | "content">;
-export type PickUpdateNote = Pick<INote, "title" | "content">;
-export type NoteParams = Pick<INote, "id">;
+export type PickCreateNote = Pick<INote, 'title' | 'content'>;
+export type PickUpdateNote = Pick<INote, 'title' | 'content'>;
+export type NoteParams = Pick<INote, 'id'>;

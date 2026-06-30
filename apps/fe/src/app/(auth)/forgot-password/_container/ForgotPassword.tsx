@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { GhibliCard } from "@/components/molecules";
+import { GhibliCard } from '@/components/molecules';
 
 const ForgotPasswordContainer = () => {
   return (

@@ -1,9 +1,11 @@
-"use client";
+'use client';
 
-import { useQuery } from "@tanstack/react-query";
-import { Api } from "@/services/api";
-import { eventsListKey, MODULE_QUERY_STALE_TIME } from "./utils";
-import { EventQuery } from "@repo/types";
+import { EventQuery } from '@repo/types';
+import { useQuery } from '@tanstack/react-query';
+
+import Api from '@/services/api';
+
+import { eventsListKey, MODULE_QUERY_STALE_TIME } from './utils';
 
 export function useEvents(query?: EventQuery) {
   return useQuery({

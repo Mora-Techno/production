@@ -30,7 +30,7 @@ export class ApiError extends Error {
     public readonly errors?: Record<string, string[]>,
   ) {
     super(message);
-    this.name = "ApiError";
+    this.name = 'ApiError';
   }
 
   get isAuthError() {
@@ -60,4 +60,4 @@ export interface IApi {
   query: string;
 }
 
-export type PickApiID = Pick<IApi, "id">;
+export type PickApiID = Pick<IApi, 'id'>;

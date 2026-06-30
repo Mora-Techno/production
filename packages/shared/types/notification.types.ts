@@ -1,4 +1,4 @@
-export type NotificationStatus = "success" | "failed";
+export type NotificationStatus = 'success' | 'failed';
 
 /** Mirror Prisma model `NotificationLog` */
 export interface INotificationLog {
@@ -13,7 +13,7 @@ export interface INotificationLog {
 
 export type NotificationLog = Pick<
   INotificationLog,
-  "id" | "recipient" | "subject" | "body" | "status" | "error"
+  'id' | 'recipient' | 'subject' | 'body' | 'status' | 'error'
 > & {
   createdAt: string;
 };
@@ -23,7 +23,4 @@ export type NotificationLogQuery = {
   limit?: number;
 };
 
-export type PickSendNotification = Pick<
-  INotificationLog,
-  "recipient" | "subject" | "body"
->;
+export type PickSendNotification = Pick<INotificationLog, 'recipient' | 'subject' | 'body'>;
